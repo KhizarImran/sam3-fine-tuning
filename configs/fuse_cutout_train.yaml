@@ -1,3 +1,7 @@
+# @package _global_
+defaults:
+  - _self_
+
 # SAM3 Training Configuration for Fuse Cutout Detection
 # Based on official SAM3 Roboflow config with modifications for custom dataset
 

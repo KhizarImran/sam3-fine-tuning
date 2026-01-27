@@ -170,8 +170,8 @@ Examples:
 
     parser.add_argument(
         "--config",
-        default="configs/fuse_cutout_train.yaml",
-        help="Path to training configuration file"
+        default="fuse_cutout_train",
+        help="Config name in SAM3's config directory (without .yaml extension)"
     )
 
     parser.add_argument(
