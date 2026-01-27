@@ -1,0 +1,230 @@
+# SAM3 Training Configuration for Fuse Cutout Detection
+# Based on official SAM3 Roboflow config with modifications for custom dataset
+
+# ==============================================================================
+# PATHS - UPDATE THESE FOR YOUR ENVIRONMENT
+# ==============================================================================
+paths:
+  # Root directory for your prepared dataset
+  # Should contain: fuse-cutout-detection/train, valid, test
+  roboflow_vl_100_root: "sam3_datasets"
+
+  # Where to save training logs, checkpoints, and TensorBoard events
+  experiment_log_dir: "experiments/fuse_cutout"
+
+  # BPE vocabulary file (included with SAM3)
+  bpe_path: "sam3/sam3/assets/bpe_simple_vocab_16e6.txt.gz"
+
+# ==============================================================================
+# DATASET CONFIGURATION
+# ==============================================================================
+data:
+  # Dataset name (must match directory in roboflow_vl_100_root)
+  dataset_name: "fuse-cutout-detection"
+
+  # Image resolution (SAM3 default)
+  resolution: 1008
+
+  # Image normalization
+  pixel_mean: [0.5, 0.5, 0.5]
+  pixel_std: [0.5, 0.5, 0.5]
+
+  # Maximum annotations per image
+  max_annotations_per_image: 200
+
+  # Data loading workers
+  num_workers_train: 4
+  num_workers_val: 0
+
+# ==============================================================================
+# MODEL CONFIGURATION
+# ==============================================================================
+model:
+  # Model checkpoint path (download from HuggingFace)
+  # You need to request access: https://huggingface.co/facebook/sam3
+  checkpoint: "path/to/sam3_checkpoint.pth"  # UPDATE THIS
+
+  # Model dimensions
+  model_dim: 256
+  num_feature_levels: 4
+
+  # Position embedding
+  position_embedding: "sine"
+  position_embedding_scale: 6.283185307179586
+  num_pos_feats: 256
+
+  # Enable segmentation (required for mask annotations)
+  do_segmentation: true
+
+  # Use text prompts
+  use_text_prompts: true
+
+# ==============================================================================
+# TRAINING HYPERPARAMETERS
+# ==============================================================================
+trainer:
+  # Training duration
+  max_epochs: 30  # Increased from 20 for small dataset
+
+  # Batch sizes
+  batch_size_train: 1  # Keep at 1 for Tesla T4 GPU
+  batch_size_val: 1
+
+  # Gradient accumulation (simulates larger batch size)
+  gradient_accumulation_steps: 4  # Effective batch size = 4
+
+  # Learning rates (per component)
+  lr_transformer: 0.0008  # 8e-4
+  lr_vision_backbone: 0.00025  # 2.5e-4
+  lr_language_backbone: 0.00005  # 5e-5
+
+  # Learning rate scaling
+  lr_scale: 0.1  # All LRs scaled by this factor
+
+  # Optimizer settings
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1e-8
+
+  # Learning rate scheduler
+  lr_scheduler: "cosine"
+  warmup_epochs: 2
+  min_lr: 1e-7
+
+  # Gradient clipping
+  clip_grad_norm: 0.1
+
+  # Mixed precision training (FP16)
+  use_amp: true
+
+  # Validation frequency
+  val_every_n_epochs: 5  # Validate every 5 epochs
+
+  # Checkpointing
+  save_every_n_epochs: 10
+  save_best_checkpoint: true
+
+# ==============================================================================
+# LOSS CONFIGURATION
+# ==============================================================================
+loss:
+  # Detection losses
+  loss_box: 5.0  # Bounding box L1 loss weight
+  loss_giou: 2.0  # GIoU loss weight
+  loss_cls: 20.0  # Classification loss weight
+  loss_presence: 20.0  # Presence loss weight
+
+  # Segmentation losses (enabled when do_segmentation=true)
+  loss_mask: 5.0  # Mask loss weight
+  loss_dice: 2.0  # Dice loss weight
+
+  # Matcher settings
+  set_cost_class: 2.0
+  set_cost_bbox: 5.0
+  set_cost_giou: 2.0
+  one_to_many_matcher_threshold: 0.4
+
+# ==============================================================================
+# DATA AUGMENTATION
+# ==============================================================================
+augmentation:
+  # Random resize range
+  random_resize_min: 800
+  random_resize_max: 1333
+
+  # Random crop (disabled by default)
+  random_crop: false
+
+  # Horizontal flip
+  horizontal_flip_prob: 0.5
+
+  # Color jitter (disabled by default for consistency)
+  color_jitter: false
+
+# ==============================================================================
+# DISTRIBUTED TRAINING (Single GPU for dev EC2)
+# ==============================================================================
+launcher:
+  num_nodes: 1
+  num_gpus: 1  # Single GPU on dev EC2
+  dist_backend: "nccl"  # Use NCCL for GPU
+  dist_url: "auto"
+
+# ==============================================================================
+# CLUSTER/SUBMITIT SETTINGS (Not used for local training)
+# ==============================================================================
+submitit:
+  use_cluster: false  # Set to false for local training
+  partition: ""
+  account: ""
+  qos: ""
+  timeout_min: 4320  # 72 hours
+  job_array_size: 1
+
+# ==============================================================================
+# LOGGING & MONITORING
+# ==============================================================================
+logging:
+  # TensorBoard
+  use_tensorboard: true
+  log_every_n_steps: 10
+
+  # Print interval
+  print_freq: 10
+
+  # Save sample predictions during validation
+  save_val_predictions: true
+  num_val_samples_to_save: 4
+
+# ==============================================================================
+# MLFLOW EXPERIMENT TRACKING
+# ==============================================================================
+mlflow:
+  # Enable MLflow logging
+  enabled: true
+
+  # MLflow tracking server URL
+  tracking_uri: "http://52.2.51.33:5000"
+
+  # Experiment name in MLflow
+  experiment_name: "sam3-fuse-cutout-detection"
+
+  # Run name (will be timestamped automatically)
+  run_name: "sam3_fuse_pilot"
+
+  # Additional tags
+  tags:
+    model: "sam3"
+    task: "fuse_cutout_detection"
+    dataset: "fuse-cutout-detection"
+    environment: "dev-ec2"
+
+  # What to log
+  log_params: true          # Log all hyperparameters
+  log_metrics: true         # Log training/validation metrics
+  log_artifacts: true       # Log checkpoints and sample predictions
+  log_system_metrics: true  # Log GPU/CPU usage
+
+# ==============================================================================
+# REPRODUCIBILITY
+# ==============================================================================
+seed: 42
+deterministic: false  # Set to true for fully reproducible results (slower)
+
+# ==============================================================================
+# NOTES
+# ==============================================================================
+# Before training:
+# 1. Update paths.roboflow_vl_100_root to your dataset path
+# 2. Update model.checkpoint to your SAM3 checkpoint path
+# 3. Request SAM3 checkpoint access: https://huggingface.co/facebook/sam3
+# 4. Ensure GPU is available: python -c "import torch; print(torch.cuda.is_available())"
+#
+# Training with 4 images:
+# - Expect overfitting (this is normal)
+# - Use this to validate pipeline works
+# - Scale to 100+ images for production
+#
+# To start training:
+#   python scripts/train_sam3.py --config configs/fuse_cutout_train.yaml
