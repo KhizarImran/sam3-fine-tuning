@@ -154,8 +154,15 @@ def main():
     print("SAM3 TRAINING WITH MLFLOW")
     print("=" * 70)
 
-    # Load config
-    with open(args.config, 'r') as f:
+    # Load config from the configs directory for MLflow setup
+    # The config name will be passed to SAM3's train.py (which uses Hydra)
+    config_file = f"configs/{args.config}.yaml"
+    if not Path(config_file).exists():
+        # Try alternative location (SAM3's config directory)
+        config_file = f"sam3/sam3/train/configs/{args.config}.yaml"
+
+    print(f"Loading config from: {config_file}")
+    with open(config_file, 'r') as f:
         config = yaml.safe_load(f)
 
     # Disable MLflow if requested
