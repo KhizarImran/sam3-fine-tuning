@@ -88,10 +88,17 @@ def main():
         mlflow.log_param("config", args.config)
         mlflow.log_param("timestamp", datetime.now().isoformat())
 
-        # Log config file as artifact
-        config_path = f"configs/{args.config}.yaml"
-        if Path(config_path).exists():
-            mlflow.log_artifact(config_path)
+        # Try to log config file as artifact (requires boto3 for S3)
+        try:
+            config_path = f"configs/{args.config}.yaml"
+            if Path(config_path).exists():
+                mlflow.log_artifact(config_path)
+                print(f"   ✓ Logged config artifact")
+        except ModuleNotFoundError:
+            print(f"   Note: Skipping artifact upload (boto3 not installed)")
+            print(f"   Install with: uv pip install boto3")
+        except Exception as e:
+            print(f"   Note: Could not upload artifacts: {e}")
 
         # Build training command
         train_script = Path(__file__).parent / "train_sam3_patched.py"
@@ -142,12 +149,20 @@ def main():
                 print(f"{'=' * 80}")
                 mlflow.log_param("status", "completed")
 
-                # Log checkpoint as artifact
-                checkpoint_dir = Path("experiments/fuse_cutout/checkpoints")
-                if checkpoint_dir.exists():
-                    for ckpt_file in checkpoint_dir.glob("*.pt"):
-                        print(f"\nLogging checkpoint: {ckpt_file}")
-                        mlflow.log_artifact(str(ckpt_file))
+                # Try to log checkpoint as artifact (requires boto3 for S3)
+                try:
+                    checkpoint_dir = Path("experiments/fuse_cutout/checkpoints")
+                    if checkpoint_dir.exists():
+                        for ckpt_file in checkpoint_dir.glob("*.pt"):
+                            print(f"\nUploading checkpoint to MLflow: {ckpt_file.name}")
+                            mlflow.log_artifact(str(ckpt_file))
+                            print(f"   ✓ Uploaded {ckpt_file.name}")
+                except ModuleNotFoundError:
+                    print(f"\n   Note: Skipping checkpoint upload (boto3 not installed)")
+                    print(f"   Checkpoint saved locally at: experiments/fuse_cutout/checkpoints/")
+                except Exception as e:
+                    print(f"\n   Note: Could not upload checkpoint: {e}")
+                    print(f"   Checkpoint saved locally at: experiments/fuse_cutout/checkpoints/")
 
             else:
                 print(f"\n{'=' * 80}")
