@@ -23,15 +23,18 @@ launcher:
 scratch:
   max_epochs: 30
   batch_size: 1
-  resolution: 672  # Reduced from 1008 to save memory
-  num_train_workers: 2  # Reduced from 10 (system recommends max 4)
+  resolution: 1008  # Keep original resolution for RoPE compatibility
+  num_train_workers: 0  # No workers to save memory
   num_val_workers: 0  # No workers for validation
+  max_ann_per_img: 50  # Reduced from 200 to save memory
 
 # Seed for reproducibility
 seed: 42
 
 # Override validation dataset to use 'valid' instead of 'test'
 trainer:
+  skip_first_val: true  # Skip validation on first epoch to save memory
+  val_epoch_freq: 10  # Validate every 10 epochs instead of every epoch
   data:
     val:
       dataset:
