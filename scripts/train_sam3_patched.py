@@ -44,13 +44,19 @@ def main():
     with initialize_config_dir(version_base="1.2", config_dir=configs_dir):
         cfg = compose(config_name=args.config)
 
+        # Make config struct mode flexible so we can modify it
+        from omegaconf import OmegaConf
+        OmegaConf.set_struct(cfg, False)
+
         # Set experiment log dir if not specified
-        if cfg.launcher.experiment_log_dir is None:
+        if not cfg.get('launcher'):
+            cfg.launcher = {}
+        if not cfg.launcher.get('experiment_log_dir'):
             cfg.launcher.experiment_log_dir = os.path.join(
                 os.getcwd(), "sam3_logs", args.config
             )
 
-        # Override launcher settings from command line
+        # Override launcher settings from command line (only if provided)
         if args.use_cluster is not None:
             cfg.launcher.use_cluster = args.use_cluster
         if args.partition is not None:
@@ -64,14 +70,18 @@ def main():
         if args.num_nodes is not None:
             cfg.launcher.num_nodes = args.num_nodes
 
+        # Set defaults if not present
+        if not cfg.launcher.get('use_cluster'):
+            cfg.launcher.use_cluster = False
+
         print("\n" + "=" * 80)
         print("SAM3 TRAINING - Configuration Loaded Successfully")
         print("=" * 80)
         print(f"Config: {args.config}")
         print(f"Dataset: {cfg.paths.roboflow_vl_100_root}")
-        print(f"Experiment dir: {cfg.paths.experiment_log_dir}")
+        print(f"Experiment dir: {cfg.launcher.experiment_log_dir}")
         print(f"GPUs: {cfg.launcher.num_gpus}")
-        print(f"Use cluster: {cfg.launcher.use_cluster}")
+        print(f"Use cluster: {cfg.launcher.get('use_cluster', False)}")
         print("=" * 80 + "\n")
 
         # Call the main training function from original train.py
