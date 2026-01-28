@@ -26,14 +26,12 @@ scratch:
   resolution: 672  # Reduced from 1008 to save memory
   num_train_workers: 2  # Reduced from 10 (system recommends max 4)
   num_val_workers: 0  # No workers for validation
-  gradient_accumulation_steps: 2  # Accumulate gradients to simulate batch_size=2
 
 # Seed for reproducibility
 seed: 42
 
 # Override validation dataset to use 'valid' instead of 'test'
 trainer:
-  gradient_accumulation_steps: 2  # Match scratch setting
   data:
     val:
       dataset:
