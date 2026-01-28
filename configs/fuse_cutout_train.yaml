@@ -40,3 +40,14 @@ trainer:
       dataset:
         img_folder: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/
         ann_file: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json
+
+  # Override validation evaluator to use 'valid' instead of 'test'
+  meters:
+    val:
+      roboflow100:
+        detection:
+          pred_file_evaluators:
+            - _target_: sam3.eval.coco_eval_offline.CocoEvaluatorOfflineWithPredFileEvaluators
+              gt_path: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json
+              tide: False
+              iou_type: "bbox"
