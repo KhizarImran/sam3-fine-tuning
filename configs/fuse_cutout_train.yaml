@@ -21,7 +21,6 @@ launcher:
 
 # Override training hyperparameters
 scratch:
-  max_epochs: 30
   batch_size: 1
   resolution: 1008  # Keep original resolution for RoPE compatibility
   num_train_workers: 0  # No workers to save memory
@@ -33,6 +32,7 @@ seed: 42
 
 # Override validation dataset to use 'valid' instead of 'test'
 trainer:
+  max_epochs: 30  # Override base config's 20 epochs
   skip_first_val: true  # Skip validation on first epoch to save memory
   val_epoch_freq: 10  # Validate every 10 epochs instead of every epoch
   skip_saving_ckpts: false  # Enable checkpoint saving
