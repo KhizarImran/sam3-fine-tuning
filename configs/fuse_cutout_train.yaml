@@ -11,8 +11,8 @@ paths:
 
 # Override dataset configuration
 roboflow_train:
-  num_images: null  # Use all available images (we have 3)
-  supercategory: "fuse-neutral-training-dataset-1"  # Our dataset name
+  num_images: null  # Use all available images (we have 3 training images)
+  supercategory: "fuse-cutout"  # Our dataset name
 
 # Override launcher settings for single GPU
 launcher:
