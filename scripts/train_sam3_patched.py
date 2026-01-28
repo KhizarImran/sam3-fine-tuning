@@ -80,7 +80,8 @@ def main():
         print(f"Config: {args.config}")
         print(f"Dataset: {cfg.paths.roboflow_vl_100_root}")
         print(f"Experiment dir: {cfg.launcher.experiment_log_dir}")
-        print(f"GPUs: {cfg.launcher.num_gpus}")
+        print(f"GPUs per node: {cfg.launcher.get('gpus_per_node', 1)}")
+        print(f"Num nodes: {cfg.launcher.get('num_nodes', 1)}")
         print(f"Use cluster: {cfg.launcher.get('use_cluster', False)}")
         print("=" * 80 + "\n")
 
