@@ -35,6 +35,12 @@ seed: 42
 trainer:
   skip_first_val: true  # Skip validation on first epoch to save memory
   val_epoch_freq: 10  # Validate every 10 epochs instead of every epoch
+  skip_saving_ckpts: false  # Enable checkpoint saving
+
+# Override checkpoint settings to save model
+checkpoint:
+  save_dir: ${paths.experiment_log_dir}/checkpoints
+  save_freq: 5  # Save every 5 epochs
   data:
     val:
       dataset:
