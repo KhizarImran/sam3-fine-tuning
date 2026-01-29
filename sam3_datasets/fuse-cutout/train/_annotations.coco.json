@@ -540,14 +540,9 @@
   ],
   "categories": [
     {
-      "id": 0,
-      "name": "fuse neutral-xzg2yturox8qwldmiogk",
-      "supercategory": "none"
-    },
-    {
       "id": 1,
       "name": "fuse neutral",
-      "supercategory": "fuse neutral-xzg2yturox8qwldmiogk"
+      "supercategory": "none"
     }
   ]
 }
