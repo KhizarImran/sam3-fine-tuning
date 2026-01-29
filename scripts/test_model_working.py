@@ -28,8 +28,8 @@ def main():
     print("SAM3 INFERENCE - CORRECT VERSION")
     print("=" * 80)
 
-    # CRITICAL: Need BPE tokenizer path
-    bpe_path = Path(sam3_path) / "assets" / "bpe_simple_vocab_16e6.txt.gz"
+    # CORRECT PATH: sam3/sam3/assets/ not sam3/assets/
+    bpe_path = Path(sam3_path) / "sam3" / "assets" / "bpe_simple_vocab_16e6.txt.gz"
     if not bpe_path.exists():
         print(f"ERROR: BPE tokenizer not found at {bpe_path}")
         print("This is required for text prompts!")
