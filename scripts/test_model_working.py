@@ -20,7 +20,7 @@ def main():
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument("--image-dir", required=True)
     parser.add_argument("--text-prompt", default="fuse cutout")
-    parser.add_argument("--threshold", type=float, default=0.3)
+    parser.add_argument("--threshold", type=float, default=0.05)
     parser.add_argument("--output", default="test_results_final")
     args = parser.parse_args()
 
