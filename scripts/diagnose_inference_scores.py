@@ -52,20 +52,25 @@ def diagnose_inference(checkpoint_path, image_path, text_prompt):
     find_stage = FindStage(
         img_ids=torch.tensor([0], device=model.device, dtype=torch.long),
         text_ids=torch.tensor([0], device=model.device, dtype=torch.long),
-        bboxes=None,
-        crop_boxes=None,
+        input_boxes=None,
+        input_boxes_mask=None,
+        input_boxes_label=None,
+        input_points=None,
+        input_points_mask=None,
     )
 
     # Forward through model
     backbone_out = state["backbone_out"]
     backbone_out.update(text_outputs)
 
+    # Get dummy geometric prompt (no box prompts)
+    geometric_prompt = model._get_dummy_prompt()
+
     outputs = model.forward_grounding(
         backbone_out=backbone_out,
         find_input=find_stage,
+        geometric_prompt=geometric_prompt,
         find_target=None,
-        image_shape=state["image_shape"],
-        ori_shape=state["ori_shape"],
     )
 
     # Extract and analyze scores
