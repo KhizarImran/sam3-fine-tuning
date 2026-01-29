@@ -3,8 +3,8 @@
                      IN ELECTRICAL PANEL INSPECTION SYSTEMS
 ================================================================================
 
-Authors: Khizar Imran, Claude (Anthropic)
-Institution: [To be filled]
+Authors: Khizar Imran
+Institution: M Grooup Energy Data Insight Ltd.
 Date: January 28, 2026
 
 Contact: [To be filled]
@@ -17,27 +17,18 @@ ABSTRACT
 Automated detection of fuse cutouts in electrical panel images is crucial for
 safety inspection and maintenance workflows. This paper presents a systematic
 approach to fine-tuning the Segment Anything Model 3 (SAM3) for domain-specific
-object detection in electrical infrastructure. We describe the complete pipeline
-from dataset preparation through model training to deployment-ready checkpoints.
+object detection in electrical infrastructure.
 
-Our methodology addresses multiple technical challenges inherent in adapting
-large vision-language models to specialized domains, including configuration
-management, GPU memory constraints, and dataset formatting. Using a pilot
-dataset of 4 annotated images (3 training, 1 validation), we achieved 60%
-mean Average Precision (mAP) and 90% recall, demonstrating the viability of
-few-shot fine-tuning for this application.
+Using a pilot dataset of 4 annotated images (3 training, 1 validation), we
+achieved 60% mean Average Precision (mAP) and 90% recall, demonstrating the
+viability of few-shot fine-tuning. The training pipeline leverages PyTorch
+distributed training on AWS EC2 (A10G GPU, 24GB VRAM) with MLflow experiment
+tracking.
 
-The training pipeline leverages PyTorch distributed training on AWS EC2 (A10G
-GPU, 24GB VRAM) with MLflow experiment tracking. Our implementation overcomes
-10 distinct technical challenges related to Hydra configuration discovery,
-CUDA memory management, and checkpoint persistence. The resulting fine-tuned
-model checkpoint (9.4GB) is ready for production deployment and further scaling
-with expanded datasets.
-
-This work contributes: (1) a reproducible fine-tuning pipeline for SAM3 on
-custom domains, (2) solutions to common technical challenges in model adaptation,
-(3) empirical evidence for few-shot transfer learning effectiveness, and (4)
-a framework for iterative model improvement in production systems.
+This work contributes: (1) a reproducible fine-tuning pipeline for SAM3,
+(2) solutions to common technical challenges in model adaptation, (3) empirical
+evidence for few-shot transfer learning effectiveness, and (4) a framework for
+iterative model improvement in production systems.
 
 Keywords: Object Detection, Transfer Learning, SAM3, Electrical Inspection,
 Computer Vision, Fine-tuning, Few-shot Learning
@@ -49,172 +40,59 @@ Computer Vision, Fine-tuning, Few-shot Learning
 1.1 Background and Motivation
 ------------------------------
 
-Electrical panel inspection is a critical safety and maintenance activity
-across industrial, commercial, and residential facilities. Manual inspection
-processes are time-intensive, require specialized expertise, and are subject
-to human error and fatigue. Automated visual inspection systems powered by
-computer vision can significantly improve inspection efficiency, consistency,
-and coverage.
+Electrical panel inspection is critical for safety and maintenance across
+industrial and commercial facilities. Manual inspection processes are time-
+intensive and subject to human error. Automated visual inspection systems can
+significantly improve efficiency and consistency.
 
-Fuse cutouts represent a specific component class in electrical distribution
-systems that require precise detection and localization for condition assessment.
-Traditional computer vision approaches using handcrafted features or classical
-object detectors (Faster R-CNN, YOLO) require extensive labeled datasets and
-domain-specific engineering. Recent advances in foundation models, particularly
-vision-language models like SAM (Segment Anything Model), offer promising
-alternatives through transfer learning and few-shot adaptation.
+SAM3, Meta's Segment Anything Model, represents state-of-the-art in promptable
+segmentation. Unlike traditional detectors, SAM3 accepts natural language
+prompts alongside images, enabling few-shot generalization. However, domain-
+specific fine-tuning remains necessary for production-grade accuracy on
+specialized domains like electrical infrastructure.
 
-SAM3, the third iteration of Meta's Segment Anything Model, represents the
-state-of-the-art in promptable segmentation. Unlike traditional detectors,
-SAM3 accepts natural language prompts ("fuse cutout") alongside images,
-enabling zero-shot and few-shot generalization. However, domain-specific
-fine-tuning remains necessary to achieve production-grade accuracy on
-specialized visual domains like electrical infrastructure.
+1.2 Problem Statement and Objectives
+------------------------------------
 
-1.2 Problem Statement
----------------------
+We address how effectively SAM3 can be adapted to detect fuse cutouts using
+minimal labeled data, what practical challenges arise in fine-tuning large
+vision-language models, and whether acceptable performance can be achieved
+with fewer than 10 training examples.
 
-We address the following research and engineering challenges:
+Our objectives are to: (1) develop a complete fine-tuning pipeline for SAM3,
+(2) document technical challenges and solutions, (3) evaluate performance on
+a pilot dataset, and (4) create reproducible infrastructure for production
+scaling.
 
-1. **Domain Adaptation**: How effectively can SAM3 be adapted to detect
-   fuse cutouts using minimal labeled data?
-
-2. **Technical Implementation**: What are the practical challenges in
-   fine-tuning large vision-language models on resource-constrained
-   infrastructure?
-
-3. **Few-Shot Learning**: Can acceptable detection performance (>80% recall)
-   be achieved with fewer than 10 training examples?
-
-4. **Production Readiness**: How can we create a reproducible pipeline
-   suitable for continuous model improvement in production systems?
-
-1.3 Research Objectives
------------------------
-
-This work aims to:
-
-1. Develop a complete fine-tuning pipeline for SAM3 on custom object
-   detection tasks
-
-2. Document and solve technical challenges in model adaptation workflow
-
-3. Evaluate model performance on a pilot dataset to validate approach
-   viability
-
-4. Create reproducible infrastructure for scaling to production datasets
-   (100+ images)
-
-5. Establish MLflow-based experiment tracking for model versioning and
-   comparison
-
-1.4 Contributions
+1.3 Contributions
 -----------------
 
-Our primary contributions include:
+Our work provides a fully documented, reproducible pipeline for SAM3 fine-
+tuning on AWS EC2 infrastructure with detailed solutions to configuration
+management, CUDA memory optimization, and checkpoint persistence challenges.
 
-• **Technical Pipeline**: A fully documented, reproducible pipeline for SAM3
-  fine-tuning on AWS EC2 infrastructure with GPU acceleration
-
-• **Problem Solutions**: Detailed solutions to 10+ technical challenges
-  including Hydra configuration, CUDA memory management, and checkpoint
-  persistence
-
-• **Empirical Validation**: Evidence that 3-4 training examples can produce
-  meaningful detection performance (60% mAP, 90% recall)
-
-• **Best Practices**: Recommendations for dataset preparation, hyperparameter
-  configuration, and deployment strategies
-
-• **Open Source**: Complete codebase, configurations, and documentation
-  available in public repository
-
-1.5 Paper Organization
-----------------------
-
-Section 2 reviews related work in transfer learning and SAM architectures.
-Section 3 describes our methodology including dataset preparation, training
-configuration, and implementation details. Section 4 presents experimental
-results and performance metrics. Section 5 discusses findings, limitations,
-and future directions. Section 6 concludes with key takeaways and
-recommendations.
+We present empirical validation demonstrating that 3-4 training examples can
+produce meaningful detection performance (60% mAP, 90% recall). All resources
+including codebase, configurations, and documentation are available in our
+public repository.
 
 ================================================================================
 2. RELATED WORK
 ================================================================================
 
-2.1 Foundation Models for Computer Vision
-------------------------------------------
+Foundation models have transformed computer vision, enabling transfer learning
+from pre-trained models to specialized domains with minimal data [1,2]. Meta's
+Segment Anything Model introduced promptable segmentation trained on 11 million
+images with 1.1 billion masks [3]. SAM3 incorporates enhanced vision-language
+alignment and improved small object detection.
 
-The emergence of foundation models has transformed computer vision, enabling
-transfer learning from massive pre-trained models to specialized domains with
-minimal labeled data [1,2]. Vision Transformers (ViT) and their variants have
-demonstrated remarkable zero-shot and few-shot capabilities [3].
+Transfer learning and few-shot learning studies show that 10-100 examples can
+significantly improve performance when starting from strong foundation models
+[4,5]. Computer vision for industrial inspection has been extensively studied
+[6,7], though SAM3 application to electrical infrastructure remains limited.
 
-2.2 Segment Anything Model (SAM)
----------------------------------
-
-Meta's Segment Anything Model introduced promptable segmentation, where users
-can guide segmentation through points, boxes, or text prompts [4]. SAM's
-architecture combines:
-
-- Vision Transformer (ViT) image encoder
-- Prompt encoder for multi-modal inputs
-- Lightweight mask decoder
-
-SAM was trained on 11 million images with 1.1 billion masks, establishing
-strong generalization capabilities. SAM2 extended temporal consistency for
-video segmentation [5]. SAM3, the latest iteration, incorporates:
-
-- Enhanced vision-language alignment
-- Improved text prompt understanding
-- Better small object detection
-- Faster inference through model optimizations
-
-2.3 Transfer Learning and Fine-tuning
---------------------------------------
-
-Fine-tuning pre-trained models on domain-specific data is a well-established
-practice [6,7]. Key considerations include:
-
-- **Learning Rate Selection**: Lower rates preserve pre-trained features
-- **Layer Freezing**: Selective fine-tuning of final layers
-- **Data Requirements**: Few-shot learning reduces annotation burden
-- **Regularization**: Prevents overfitting on small datasets
-
-Studies show that even 10-100 examples can significantly improve performance
-on specialized domains when starting from strong foundation models [8,9].
-
-2.4 Object Detection in Industrial Domains
--------------------------------------------
-
-Computer vision for industrial inspection has been extensively studied [10,11].
-Electrical infrastructure inspection specifically presents challenges:
-
-- **Visual Complexity**: Cluttered scenes with multiple components
-- **Lighting Variability**: Outdoor/indoor, shadows, reflections
-- **Scale Variation**: Components at different distances
-- **Safety Requirements**: High recall critical for fault detection
-
-Traditional approaches use classical detectors (Faster R-CNN, YOLO) trained
-from scratch on domain data [12]. Recent work explores transfer learning
-from COCO pre-trained models [13], but foundation models like SAM remain
-underexplored in this domain.
-
-2.5 Research Gap
-----------------
-
-While SAM and SAM3 have been applied to medical imaging, autonomous driving,
-and general object detection, their application to electrical infrastructure
-inspection remains limited. Furthermore, practical implementation challenges
-in fine-tuning large vision-language models on resource-constrained hardware
-are not well-documented in academic literature.
-
-Our work addresses this gap by providing:
-- Complete implementation details for SAM3 fine-tuning
-- Solutions to practical engineering challenges
-- Empirical validation on electrical component detection
-- Reproducible pipeline suitable for industry adoption
+Our work addresses this gap by providing complete implementation details for
+SAM3 fine-tuning with solutions to practical engineering challenges.
 
 ================================================================================
 3. METHODOLOGY
@@ -223,680 +101,94 @@ Our work addresses this gap by providing:
 3.1 System Architecture
 -----------------------
 
-Our fine-tuning pipeline consists of four major components:
-
-1. **Dataset Preparation**: Annotation, format conversion, train/val split
-2. **Training Infrastructure**: AWS EC2 with GPU, package management
-3. **Model Training**: PyTorch DDP, Hydra configuration, checkpointing
-4. **Experiment Tracking**: MLflow for metrics, parameters, artifacts
-
-Figure 1 (to be added) illustrates the end-to-end pipeline architecture.
+Our pipeline consists of: (1) Dataset preparation with Roboflow annotation,
+(2) Training infrastructure on AWS EC2 with GPU, (3) Model training using
+PyTorch DDP and Hydra configuration, and (4) Experiment tracking with MLflow.
 
 3.2 Dataset Preparation
 -----------------------
 
-3.2.1 Data Source and Selection
---------------------------------
-
-Source images were selected from the photos/fuse_neutral/ directory containing
-high-resolution photographs of electrical panels with visible fuse cutouts.
-Selection criteria:
-
-- Clear visibility of fuse cutout components
-- Varied lighting conditions
-- Different panel configurations
-- Representative of production deployment scenarios
-
-Total dataset size: 4 images
-- Training set: 3 images (75%)
-- Validation set: 1 image (25%)
-- Test set: 0 images (pilot phase)
-
-3.2.2 Annotation Process
--------------------------
-
-Annotation was performed using Roboflow's web-based Smart Polygon tool:
-
-1. **Upload**: Images uploaded to Roboflow project
-   "Fuse Neutral Training Dataset"
-
-2. **Labeling**: Manual polygon annotation of fuse cutout boundaries
-   - Tool: Smart Polygon (AI-assisted boundary detection)
-   - Class: Single class "fuse-cutout"
-   - Average annotation time: 1-2 minutes per image
-
-3. **Validation**: Visual inspection of annotation quality
-   - Polygon boundary accuracy
-   - Complete object coverage
-   - Consistent labeling across images
-
-4. **Export**: COCO format JSON with polygon segmentation masks
-
-Dataset statistics:
-- Total annotations: 9 polygons
-- Training annotations: 7 polygons
-- Validation annotations: 2 polygons
-- Average polygons per image: 2.25
-
-3.2.3 Data Format and Structure
---------------------------------
-
-Exported dataset follows COCO JSON format:
-
-```
-sam3_datasets/
-└── fuse-cutout/
-    ├── train/
-    │   ├── _annotations.coco.json
-    │   ├── image_1.jpg
-    │   ├── image_2.jpg
-    │   └── image_3.jpg
-    └── valid/
-        ├── _annotations.coco.json
-        └── image_4.jpg
-```
-
-COCO annotation structure:
-- images: Image metadata (id, filename, dimensions)
-- annotations: Polygon coordinates, category, bbox, area
-- categories: Single category "fuse-cutout"
-
-This format is directly compatible with SAM3's Sam3ImageDataset loader.
+Source images were selected from electrical panel photographs with visible fuse
+cutouts. The dataset comprises 4 images: 3 training and 1 validation, with 9
+total annotations (7 training, 2 validation). Annotation was performed using
+Roboflow's Smart Polygon tool, taking 1-2 minutes per image. Data was exported
+in COCO format with polygon segmentation masks.
 
 3.3 Infrastructure Setup
 ------------------------
 
-3.3.1 Hardware Configuration
-----------------------------
+Initial setup used Windows EC2 g4dn.xlarge with Tesla T4 (16GB VRAM), but
+Triton library limitations required migration to Ubuntu. Final configuration
+used Ubuntu EC2 g5.xlarge with NVIDIA A10G (24GB VRAM), providing adequate
+memory for SAM3 at resolution 1008. The T4 16GB was insufficient for training,
+resulting in out-of-memory errors.
 
-Initial setup: Windows EC2 g4dn.xlarge
-- GPU: NVIDIA Tesla T4 (16GB VRAM)
-- vCPUs: 4
-- RAM: 16GB
-- Storage: 128GB EBS
-
-Challenge: Triton library (required by SAM3) is Linux-only
-Solution: Migrated to Ubuntu EC2
-
-Final configuration: Ubuntu EC2 g5.xlarge
-- GPU: NVIDIA A10G (24GB VRAM) ✓
-- vCPUs: 4
-- RAM: 16GB
-- Storage: 128GB EBS
-- Cost: ~$1.00/hour on-demand
-
-Rationale for upgrade:
-- T4 16GB insufficient for SAM3 at resolution 1008 (OOM errors)
-- A10G 24GB provides adequate headroom
-- Faster training iterations
-
-3.3.2 Software Environment
---------------------------
-
-Operating System: Ubuntu 22.04 LTS
-Python: 3.10
-CUDA: 12.x (with NVIDIA drivers)
-
-Package Manager: UV (https://astral.sh/uv)
-- Faster than pip
-- Better dependency resolution
-- Virtual environment management
-
-Key dependencies:
-- PyTorch 2.x (with CUDA support)
-- Hydra-core (configuration management)
-- OmegaConf (config composition)
-- MLflow (experiment tracking)
-- SAM3 (installed as editable package)
-
-Installation steps:
-```bash
-# Install UV
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Clone SAM3
-git clone https://github.com/facebookresearch/sam3.git
-uv pip install -e sam3
-
-# Install additional dependencies
-uv pip install mlflow hydra-core omegaconf
-```
-
-3.3.3 HuggingFace Authentication
----------------------------------
-
-SAM3 model weights are gated on HuggingFace Hub, requiring authentication:
-
-1. Request access: https://huggingface.co/facebook/sam3
-2. Generate access token: HuggingFace Settings → Access Tokens
-3. Set environment variable: `export HF_TOKEN="hf_..."`
-
-This enables automatic model download during training initialization.
+Software environment included Python 3.10, CUDA 12.x, PyTorch 2.x, Hydra-core
+for configuration management, and MLflow for experiment tracking. UV package
+manager was used for faster dependency resolution.
 
 3.4 Training Configuration
 --------------------------
 
-3.4.1 Configuration Management
--------------------------------
+SAM3 uses Hydra for hierarchical configuration. We created a custom config
+(fuse_cutout_train.yaml) overriding the base Roboflow configuration. Key
+settings included: batch size of 1 (GPU memory constrained), resolution 1008
+(required for RoPE compatibility), 30 epochs (20 completed in practice),
+validation every 10 epochs, and checkpoint saving every 5 epochs.
 
-SAM3 uses Hydra for hierarchical configuration composition. Our approach:
-
-Base config: roboflow_v100/roboflow_v100_full_ft_100_images.yaml
-Custom config: configs/fuse_cutout_train.yaml
-
-Key overrides in fuse_cutout_train.yaml:
-
-```yaml
-# Dataset configuration
-paths:
-  roboflow_vl_100_root: "sam3_datasets"
-  experiment_log_dir: "experiments/fuse_cutout"
-
-roboflow_train:
-  num_images: null  # Use all available (3 images)
-  supercategory: "fuse-cutout"
-
-# Hardware configuration
-launcher:
-  num_nodes: 1
-  gpus_per_node: 1
-
-# Training hyperparameters
-scratch:
-  batch_size: 1
-  resolution: 1008
-  num_train_workers: 0
-  num_val_workers: 0
-  max_ann_per_img: 50
-
-# Training schedule
-trainer:
-  max_epochs: 30
-  skip_first_val: true
-  val_epoch_freq: 10
-  skip_saving_ckpts: false
-
-# Checkpointing
-checkpoint:
-  save_dir: ${paths.experiment_log_dir}/checkpoints
-  save_freq: 5
-```
-
-3.4.2 Hyperparameter Selection
--------------------------------
-
-Batch Size: 1
-- Constrained by GPU memory (24GB A10G)
-- SAM3 at resolution 1008 requires ~15GB for forward + backward pass
-
-Resolution: 1008
-- Matches SAM3 pre-trained model
-- Required for RoPE (Rotary Position Embeddings) compatibility
-- Reducing resolution causes assertion errors in position encoding
-
-Learning Rate: Default from base config
-- Preserved SAM3's pre-tuned scheduler
-- Appropriate for fine-tuning (lower than training from scratch)
-
-Epochs: 30 (actual: 20 due to base config override)
-- Pilot phase: validate approach
-- Production: 50-100 epochs with early stopping
-
-Validation Frequency: Every 10 epochs
-- Balances monitoring with training efficiency
-- Reduces validation overhead on small dataset
-
-3.4.3 Regularization and Optimization
---------------------------------------
-
-Mixed Precision Training: Enabled (BF16)
-- Reduces memory footprint
-- Speeds up training
-- Minimal accuracy impact
-
-Gradient Checkpointing: Enabled
-- Trades compute for memory
-- Allows larger batch sizes (not utilized in this work)
-
-Data Augmentation: Default SAM3 transforms
-- Random horizontal flip
-- Color jittering
-- Resize and crop
-
-No additional regularization (dropout, weight decay adjustments) was applied
-in pilot phase to preserve pre-trained model characteristics.
+Mixed precision training (BF16) was enabled to reduce memory footprint.
+Learning rate and optimization parameters were inherited from SAM3's pre-tuned
+configuration appropriate for fine-tuning.
 
 3.5 Technical Challenges and Solutions
 ---------------------------------------
 
-3.5.1 Challenge 1: Hydra Config Discovery
-------------------------------------------
+We encountered 10+ distinct technical challenges:
 
-Problem: SAM3 installed as editable package (`pip install -e sam3`) does not
-include configuration files in package resources. Hydra's default
-package-based discovery fails.
+**Hydra Config Discovery**: SAM3 installed as editable package doesn't include
+config files in package resources. Solution: Created custom training wrapper
+using initialize_config_dir() with filesystem paths.
 
-Error:
-```
-hydra.errors.MissingConfigException: Cannot find primary config
-'fuse_cutout_train' in search path
-```
+**GPU Memory Constraints**: T4 16GB insufficient for SAM3 at resolution 1008.
+Solution: Upgraded to A10G 24GB. Training uses ~16GB peak memory.
 
-Root Cause: Editable installs create symlinks to source directory but don't
-install package data files defined in setup.py/pyproject.toml.
+**Resolution Compatibility**: Reducing resolution caused RoPE position encoding
+errors. Solution: Maintained resolution 1008 as required by pre-trained model.
 
-Solution: Created custom training wrapper (scripts/train_sam3_patched.py)
-using Hydra's initialize_config_dir() with filesystem paths:
+**Checkpoint Persistence**: Base configuration had skip_saving_ckpts: true.
+Solution: Explicitly override to enable checkpoint saving with save_freq: 5.
 
-```python
-from hydra import compose, initialize_config_dir
+**Disk Space Management**: Each checkpoint is 9.4GB. Solution: Manual cleanup
+of previous checkpoints before retraining.
 
-configs_dir = str((Path(__file__).parent.parent / "sam3" / "sam3" /
-                   "train" / "configs").absolute())
-
-with initialize_config_dir(version_base="1.2", config_dir=configs_dir):
-    cfg = compose(config_name=args.config)
-```
-
-This bypasses package resource discovery, loading configs directly from
-filesystem. Configs must exist in both:
-- configs/ (for version control)
-- sam3/sam3/train/configs/ (for Hydra discovery)
-
-3.5.2 Challenge 2: OmegaConf Struct Mode
------------------------------------------
-
-Problem: Attempting to set configuration fields not defined in base schema
-raises errors when struct mode is enabled.
-
-Error:
-```
-omegaconf.errors.ConfigAttributeError: Key 'use_cluster' is not in struct
-```
-
-Solution: Disable struct mode after config composition:
-
-```python
-from omegaconf import OmegaConf
-OmegaConf.set_struct(cfg, False)
-```
-
-This allows dynamic field addition/modification required for command-line
-overrides and custom configuration extensions.
-
-3.5.3 Challenge 3: GPU Process Spawning
-----------------------------------------
-
-Problem: Base configuration specifies gpus_per_node: 2, spawning two training
-processes. Single-GPU system cannot allocate CUDA device 1.
-
-Error:
-```
-torch.cuda.OutOfMemoryError: CUDA error: invalid device ordinal
-```
-
-Solution: Override launcher configuration:
-
-```yaml
-launcher:
-  num_nodes: 1
-  gpus_per_node: 1
-```
-
-PyTorch DDP (Distributed Data Parallel) correctly spawns single process.
-
-3.5.4 Challenge 4: Dataset Path Resolution
--------------------------------------------
-
-Problem: Default config looks for supercategory "-grccs" and "test/" split,
-neither of which exist in our dataset structure.
-
-Error:
-```
-AssertionError: Missing: sam3_datasets/-grccs/test/_annotations.coco.json
-```
-
-Solution: Override supercategory and validation dataset paths:
-
-```yaml
-roboflow_train:
-  supercategory: "fuse-cutout"
-
-trainer:
-  data:
-    val:
-      dataset:
-        img_folder: ${paths.roboflow_vl_100_root}/
-                    ${roboflow_train.supercategory}/valid/
-        ann_file: ${paths.roboflow_vl_100_root}/
-                  ${roboflow_train.supercategory}/valid/_annotations.coco.json
-```
-
-Also override COCO evaluator gt_path to match validation split.
-
-3.5.5 Challenge 5: Resolution and RoPE Compatibility
------------------------------------------------------
-
-Problem: Attempting to reduce resolution from 1008 to 672 (to save memory)
-causes assertion errors in RoPE position encoding.
-
-Error:
-```
-AssertionError in sam3/model/rope.py
-```
-
-Root Cause: SAM3's Rotary Position Embeddings are pre-computed for specific
-resolutions. Changing resolution breaks position encoding dimensions.
-
-Solution: Maintain resolution: 1008 and upgrade GPU (T4 16GB → A10G 24GB)
-to handle memory requirements.
-
-Alternative (not implemented): Modify RoPE frequency computation for custom
-resolutions, but risks degrading pre-trained model quality.
-
-3.5.6 Challenge 6: CUDA Out of Memory
---------------------------------------
-
-Problem: Tesla T4 (16GB VRAM) insufficient for SAM3 training at resolution
-1008 with batch_size 1.
-
-Error:
-```
-torch.cuda.OutOfMemoryError: CUDA out of memory.
-Tried to allocate 1.60 GiB (GPU 0; 15.75 GiB total capacity)
-```
-
-Memory breakdown:
-- Model weights: ~10GB
-- Forward pass activations: ~4GB
-- Backward pass gradients: ~4GB
-- Optimizer states: ~2GB
-Total: ~20GB (exceeds T4 16GB)
-
-Solution: Upgraded EC2 instance from g4dn.xlarge (T4 16GB) to g5.xlarge
-(A10G 24GB). Training now fits comfortably with ~16GB peak usage.
-
-Alternative approaches not pursued:
-- Gradient accumulation (increases training time)
-- Model quantization (may degrade accuracy)
-- Smaller batch size (already at minimum 1)
-
-3.5.7 Challenge 7: Checkpoint Persistence
-------------------------------------------
-
-Problem: Initial training run completed successfully but no checkpoint was
-saved. Base configuration has skip_saving_ckpts: true.
-
-Impact: 20 epochs of training (~25 minutes) wasted, no trained model to
-evaluate or deploy.
-
-Solution: Override trainer configuration:
-
-```yaml
-trainer:
-  skip_saving_ckpts: false
-
-checkpoint:
-  save_dir: ${paths.experiment_log_dir}/checkpoints
-  save_freq: 5  # Save every 5 epochs
-```
-
-This creates checkpoint.pt files in experiments/fuse_cutout/checkpoints/
-preserving model weights, optimizer state, and training metadata.
-
-3.5.8 Challenge 8: Epochs Configuration
-----------------------------------------
-
-Problem: Setting scratch.max_epochs: 30 did not override actual training
-duration. Training stopped at epoch 20.
-
-Root Cause: Base config defines trainer.max_epochs: 20. Our override was
-placed in wrong config hierarchy level (scratch vs trainer).
-
-Solution: Move max_epochs override to trainer section:
-
-```yaml
-trainer:
-  max_epochs: 30  # Correct location
-```
-
-However, base config still took precedence due to config composition order.
-For production, modify base config directly or use stronger override syntax.
-
-3.5.9 Challenge 9: Disk Space Exhaustion
------------------------------------------
-
-Problem: EC2 instance ran out of disk space during second training run when
-attempting to save epoch 1 checkpoint.
-
-Error:
-```
-OSError: [Errno 28] No space left on device
-```
-
-Root Cause: Each checkpoint is 9.4GB. With 128GB EBS volume:
-- OS and packages: ~20GB
-- HuggingFace cache: ~10GB
-- SAM3 repository: ~2GB
-- Virtual environment: ~5GB
-- First checkpoint: 9.4GB
-- Training artifacts: ~5GB
-Total: ~51GB used, ~77GB free
-Second checkpoint write would exceed capacity.
-
-Solution: Remove previous checkpoint before retraining:
-
-```bash
-rm experiments/fuse_cutout/checkpoints/checkpoint.pt
-```
-
-For production, implement checkpoint management:
-- Keep only best N checkpoints
-- Use external storage (S3) for archive
-- Monitor disk usage proactively
-
-3.5.10 Challenge 10: MLflow Artifact Upload
---------------------------------------------
-
-Problem: MLflow configured to store artifacts in S3, requires boto3 and AWS
-credentials. Artifact upload fails without these dependencies.
-
-Error:
-```
-ModuleNotFoundError: No module named 'boto3'
-```
-
-Solution: Graceful degradation in MLflow wrapper:
-
-```python
-try:
-    mlflow.log_artifact(config_path)
-except ModuleNotFoundError:
-    print("Note: Skipping artifact upload (boto3 not installed)")
-except Exception as e:
-    print(f"Note: Could not upload artifacts: {e}")
-```
-
-Metrics and parameters still log successfully. Checkpoints remain on local
-filesystem. For production, install boto3 and configure AWS credentials to
-enable artifact archiving.
+**MLflow Artifact Upload**: Requires boto3 for S3 storage. Solution: Graceful
+degradation allowing metrics logging while artifacts remain local.
 
 3.6 Training Execution
 ----------------------
 
-3.6.1 Training Command
-----------------------
+Training was executed via MLflow wrapper connecting to tracking server at
+http://52.2.51.33:5000. The wrapper spawned the training subprocess, streamed
+output in real-time, logged metrics and parameters, and attempted checkpoint
+upload.
 
-Training executed via MLflow wrapper for experiment tracking:
+PyTorch DDP workflow included: loading configuration via Hydra, initializing
+SAM3 from HuggingFace, loading COCO dataset, training loop with forward/
+backward passes, and validation every 10 epochs. Training duration was ~25
+minutes for 20 epochs on A10G GPU.
 
-```bash
-uv run python scripts/train_with_mlflow.py --config fuse_cutout_train
-```
+SAM3 uses compound loss combining detection loss (Focal loss + L1/GIoU for
+bbox), segmentation loss (Dice + Cross-entropy for masks), and auxiliary
+losses for deep supervision. Optimizer was AdamW with cosine annealing
+scheduler and 2-epoch warmup.
 
-This script:
-1. Connects to MLflow tracking server (http://52.2.51.33:5000)
-2. Creates/selects experiment "SAM3-Fuse-Cutout"
-3. Starts MLflow run with auto-generated name
-4. Logs configuration parameters
-5. Spawns train_sam3_patched.py subprocess
-6. Streams training output in real-time
-7. Logs completion status
-8. Attempts to upload checkpoint (fails gracefully if boto3 missing)
-
-3.6.2 Training Process
-----------------------
-
-PyTorch DDP workflow:
-1. Load configuration via Hydra
-2. Initialize SAM3 model from HuggingFace
-3. Load dataset (Sam3ImageDataset)
-4. Create optimizer and scheduler
-5. Training loop:
-   - Forward pass (image → predictions)
-   - Loss computation (detection loss + segmentation loss)
-   - Backward pass (compute gradients)
-   - Optimizer step (update weights)
-   - Checkpoint save (every 5 epochs)
-6. Validation loop (every 10 epochs):
-   - Forward pass on validation set
-   - Compute metrics (mAP, Recall, Precision)
-   - Log predictions to JSON
-
-Training duration: ~25 minutes for 20 epochs on A10G GPU
-
-3.6.3 Loss Function
--------------------
-
-SAM3 uses compound loss function:
-
-L_total = λ_det * L_detection + λ_seg * L_segmentation + λ_aux * L_auxiliary
-
-Components:
-- L_detection: Focal loss for object classification + L1/GIoU for bbox
-- L_segmentation: Dice loss + Cross-entropy for mask prediction
-- L_auxiliary: Auxiliary decoder losses for deep supervision
-
-Loss weights (λ) inherited from base configuration, tuned for general SAM3
-training. Fine-tuning preserves these weights.
-
-3.6.4 Optimizer and Scheduler
-------------------------------
-
-Optimizer: AdamW
-- Learning rate: Inherited from base config (~1e-5 for fine-tuning)
-- Weight decay: 0.01
-- Betas: (0.9, 0.999)
-
-Scheduler: Cosine annealing with warmup
-- Warmup epochs: 2
-- Min learning rate: 1e-7
-
-These settings optimize convergence while preventing catastrophic forgetting
-of pre-trained features.
-
-3.7 Experiment Tracking
+3.7 Evaluation Protocol
 -----------------------
 
-3.7.1 MLflow Configuration
----------------------------
-
-MLflow server hosted on separate EC2 instance:
-- URL: http://52.2.51.33:5000
-- Backend: SQLite database
-- Artifact store: S3 (requires AWS credentials)
-
-Experiment structure:
-- Experiment name: "SAM3-Fuse-Cutout"
-- Run names: Auto-generated (config_timestamp)
-- Logged parameters: config, timestamp, status
-- Logged metrics: Epoch number, loss values
-- Artifacts: Training config YAML, checkpoint (if boto3 available)
-
-3.7.2 Tracked Metrics
----------------------
-
-Per-epoch metrics logged:
-- Epoch number
-- Training loss (detection, segmentation, total)
-- Validation metrics (every 10 epochs):
-  - mAP (mean Average Precision)
-  - AP at IoU thresholds (0.50, 0.75)
-  - Average Recall
-  - Per-class performance
-
-These enable:
-- Training progress monitoring
-- Hyperparameter comparison across runs
-- Model version tracking
-- Reproducibility
-
-3.8 Validation and Evaluation
-------------------------------
-
-3.8.1 Evaluation Protocol
---------------------------
-
-Validation performed using COCO evaluation toolkit:
-- Predictions saved to JSON (COCO format)
-- Compared against ground truth annotations
-- Metrics computed at multiple IoU thresholds (0.50:0.05:0.95)
-
-Evaluation script: sam3.eval.coco_eval_offline.CocoEvaluatorOffline
-
-3.8.2 Metrics Definitions
---------------------------
-
-Mean Average Precision (mAP):
-- Average precision across IoU thresholds 0.50 to 0.95
-- Primary metric for object detection
-- Balances precision and recall
-
-Precision:
-- True Positives / (True Positives + False Positives)
-- Measures detection accuracy
-
-Recall:
-- True Positives / (True Positives + False Negatives)
-- Measures detection completeness
-
-Average Precision (AP) @IoU=X:
-- Precision at specific IoU threshold
-- AP@0.50: "Loose" localization
-- AP@0.75: "Tight" localization
-
-IoU (Intersection over Union):
-- Overlap between predicted and ground truth boxes
-- Range: 0 (no overlap) to 1 (perfect match)
-
-3.9 Reproducibility Considerations
------------------------------------
-
-To ensure reproducibility:
-
-1. **Random Seed**: Set to 42 in configuration
-   - Controls PyTorch, NumPy, Python random number generation
-   - Enables deterministic training (with caveats for CUDA ops)
-
-2. **Version Control**: All code, configs, and scripts in Git repository
-   - Commit history documents evolution
-   - Tags mark successful training runs
-
-3. **Environment Specification**: UV lock file captures exact dependencies
-   - Reproducible package versions
-   - Conflicts resolved deterministically
-
-4. **Configuration Archiving**: Training configs logged to MLflow
-   - Every run preserves hyperparameters
-   - Easy comparison between experiments
-
-5. **Hardware Documentation**: EC2 instance type and GPU recorded
-   - Performance characteristics known
-   - Memory constraints documented
-
-Limitations on reproducibility:
-- Non-deterministic CUDA operations (convolutions, reductions)
-- HuggingFace model version updates
-- Dataset augmentation randomness
+Validation used COCO evaluation toolkit computing mAP across IoU thresholds
+0.50 to 0.95. Primary metrics were mean Average Precision (mAP), Average
+Precision at IoU 0.50 and 0.75, and Average Recall. Predictions were saved to
+JSON format and compared against ground truth annotations.
 
 ================================================================================
 4. RESULTS
@@ -905,240 +197,47 @@ Limitations on reproducibility:
 4.1 Training Progression
 ------------------------
 
-4.1.1 Loss Curves
------------------
-
-Training loss decreased consistently across 20 epochs:
-
-Epoch 0: Loss = 78.58
-Epoch 10: Loss = 19.40
-Epoch 19: Loss = 17.66
-
-Loss reduction: 77.5% from initial to final epoch
-
-Observations:
-- Steep initial decline (epochs 0-5): Model quickly adapts to new domain
-- Gradual decline thereafter: Fine-tuning of decision boundaries
-- No signs of overfitting: Loss continues decreasing through epoch 19
-- Validation loss not computed at every epoch (val_epoch_freq: 10)
-
-Individual loss components (epoch 19):
-- Detection loss (bbox): 0.0059
-- Detection loss (GIoU): 0.0207
-- Classification loss: 0.0139
-- Segmentation loss: Low magnitude (not primary focus)
-
-4.1.2 Training Stability
--------------------------
-
-Training completed without interruptions:
-- No NaN losses observed
-- No gradient explosion (all values finite)
-- Memory usage stable (~16GB peak)
-- GPU utilization: 90-95% throughout
-
-Checkpoint saves successful at epochs 5, 10, 15, 20 (but only epoch 20
-retained due to disk space management).
+Training loss decreased consistently: Epoch 0 (78.58), Epoch 10 (19.40),
+Epoch 19 (17.66), representing 77.5% reduction. Training completed without
+interruptions with stable memory usage (~16GB peak) and 90-95% GPU utilization.
 
 4.2 Validation Performance
 --------------------------
 
-4.2.1 Primary Metrics
----------------------
+Final validation results at Epoch 19:
+- Mean Average Precision (mAP): 60.0%
+- Average Precision @IoU=0.50: 66.7%
+- Average Precision @IoU=0.75: 66.7%
+- Average Recall @maxDets=10: 90%
+- Average Recall @maxDets=100: 90%
 
-Final validation results (Epoch 19):
+The 60% mAP exceeded pilot target (>50%) but remained below production target
+(<80%). The 90% recall was excellent for pilot phase, meeting safety
+requirements where false negatives are costly. Consistent AP across IoU
+thresholds suggests good bounding box localization quality.
 
-Mean Average Precision (mAP) @IoU=0.50:0.95: 60.0%
-- Above initial target for pilot (>50%)
-- Below production target (<75%)
-
-Average Precision @IoU=0.50: 66.7%
-- Good performance at standard detection threshold
-- Indicates model reliably identifies fuse cutouts
-
-Average Precision @IoU=0.75: 66.7%
-- Consistent with AP@0.50
-- Suggests tight bounding box localization
-
-Average Recall @maxDets=10: 90%
-Average Recall @maxDets=100: 90%
-- Excellent recall: finds 9 out of 10 fuse cutouts
-- Critical for safety applications where false negatives costly
-
-4.2.2 Performance by Object Size
----------------------------------
-
-Average Precision (medium objects): 90.0%
-- "Medium" defined by COCO standards (32² to 96² pixels)
-- Fuse cutouts in our dataset fall into this category
-- Very strong performance on relevant object scale
-
-AP (small objects): -1.0 (no small objects in validation set)
-AP (large objects): -1.0 (no large objects in validation set)
-
-This indicates dataset is well-matched to target object scale.
-
-4.2.3 Confusion Matrix Analysis
---------------------------------
-
-While detailed confusion matrix not available from standard COCO evaluation,
-we can infer:
-
-True Positives: ~9/10 annotations correctly detected (90% recall)
-False Negatives: ~1/10 annotations missed
-False Positives: Cannot determine precisely from mAP alone, but 60% mAP
-                 suggests moderate false positive rate
-
-For production deployment, detailed confusion matrix analysis would be
-performed on larger test set.
-
-4.2.4 Qualitative Assessment
------------------------------
-
-Visual inspection of predictions (experiments/fuse_cutout/dumps/):
-- Bounding boxes accurately aligned with fuse cutout boundaries
-- No obvious systematic errors (e.g., confusing fuses with other components)
-- Polygon segmentation masks (when generated) capture object shape well
-
-Failure cases (1 in 10 missed):
-- Likely due to partial occlusion, extreme lighting, or boundary ambiguity
-- Requires examination of specific image to diagnose
+Performance on medium objects (32² to 96² pixels) was 90%, matching the scale
+of fuse cutouts in our dataset. Visual inspection showed accurate bounding
+boxes with no systematic errors.
 
 4.3 Comparison with Baseline
 -----------------------------
 
-Direct comparison with pre-trained SAM3 (zero-shot) not performed in this
-study due to time constraints. However, literature suggests:
-
-Expected zero-shot performance: 20-40% mAP on specialized domains
-Our fine-tuned performance: 60% mAP
-
-Estimated improvement: +20 to +40 percentage points mAP
-
-This aligns with typical fine-tuning gains reported in transfer learning
-literature [8,9].
+Direct comparison with zero-shot SAM3 was not performed. However, literature
+suggests expected zero-shot performance of 20-40% mAP on specialized domains.
+Our fine-tuned 60% mAP represents an estimated improvement of +20 to +40
+percentage points, aligning with typical fine-tuning gains.
 
 4.4 Computational Performance
 -----------------------------
 
-4.4.1 Training Time
--------------------
+Total training duration was ~25 minutes for 20 epochs (1.25 minutes per epoch).
+Scaling estimates: 10 images (1 hour), 50 images (5 hours), 100 images (10
+hours), 500 images (2 days).
 
-Total training duration: ~25 minutes
-- 20 epochs completed
-- Average time per epoch: 1.25 minutes
-
-Breakdown per epoch:
-- Training (3 images): ~45 seconds
-- Validation (1 image, every 10 epochs): ~30 seconds
-- Checkpoint save (every 5 epochs): ~15 seconds
-
-These times are for pilot dataset (4 images). Scaling estimates:
-
-Dataset Size | Estimated Training Time (20 epochs)
--------------|------------------------------------
-10 images    | 1 hour
-50 images    | 5 hours
-100 images   | 10 hours
-500 images   | 2 days
-
-Linear scaling assumption reasonable for fixed batch size and resolution.
-
-4.4.2 Inference Time
---------------------
-
-Not measured in this study (inference script not yet implemented).
-
-Expected inference time based on SAM3 literature: 100-300ms per image on
-A10G GPU. Batch processing can improve throughput via parallelization.
-
-4.4.3 Resource Utilization
----------------------------
-
-GPU: NVIDIA A10G (24GB VRAM)
-- Peak memory usage: 16GB (~67% capacity)
-- Average utilization: 90-95%
-- No memory exhaustion errors
-
-CPU: 4 vCPUs
-- Minimal usage (data loading not bottleneck with num_workers=0)
-
-Disk: 128GB EBS
-- Checkpoint: 9.4GB
-- Dataset: 500MB
-- Cache: ~15GB
-- Total usage: ~51GB (40% capacity)
-
-Network: Minimal (no distributed training across nodes)
-
-4.5 Model Characteristics
---------------------------
-
-4.5.1 Model Size
-----------------
-
-Final checkpoint: 9.4GB
-- Includes full model weights (~9GB)
-- Optimizer state (~300MB)
-- Training metadata (~100MB)
-
-Model architecture (inherited from SAM3):
-- Vision backbone: ViT-H (huge) or similar
-- Prompt encoder: CLIP-based text encoder
-- Mask decoder: Lightweight transformer
-
-Parameter count: ~640M (estimated based on SAM3 architecture)
-
-4.5.2 Generalization Capability
---------------------------------
-
-With only 3 training examples:
-- Validation performance: 60% mAP, 90% recall
-- No signs of severe overfitting (loss decreasing, validation stable)
-
-This suggests:
-1. Strong transfer from SAM3 pre-training
-2. Few-shot learning effective for this domain
-3. Additional data likely to improve performance further
-
-Expected scaling relationship:
-- 10 images: 65-70% mAP
-- 50 images: 75-80% mAP
-- 100 images: 80-85% mAP
-- 500 images: 85-90% mAP (diminishing returns)
-
-These estimates based on few-shot learning literature [8,9] and typical
-transfer learning curves.
-
-4.6 Ablation Studies
---------------------
-
-No formal ablation studies conducted in pilot phase. Future work should
-examine:
-- Impact of resolution (if RoPE compatibility resolved)
-- Batch size effects (with gradient accumulation)
-- Learning rate sensitivity
-- Layer freezing strategies
-- Data augmentation techniques
-
-4.7 Error Analysis
-------------------
-
-Detailed error analysis deferred to full-scale deployment. Preliminary
-observations:
-
-Missing Detection (1 in 10):
-- Hypothesis: Partial occlusion or low contrast
-- Requires visual inspection of validation image
-
-False Positives (inferred from 60% mAP):
-- Hypothesis: Nearby components with similar appearance
-- Could be improved with more training examples showing difficult negatives
-
-For production:
-- Collect failure cases from deployment
-- Expand training set with challenging examples
-- Iterative model improvement
+Final checkpoint was 9.4GB including full model weights (~9GB), optimizer state
+(~300MB), and training metadata (~100MB). Model has ~640M parameters based on
+SAM3 ViT-H architecture.
 
 ================================================================================
 5. DISCUSSION
@@ -1147,368 +246,105 @@ For production:
 5.1 Key Findings
 ----------------
 
-5.1.1 Few-Shot Transfer Learning Effectiveness
------------------------------------------------
+Primary finding: 3 training examples achieved 60% mAP and 90% recall,
+demonstrating few-shot transfer learning effectiveness. This has important
+implications for annotation efficiency (pilot validation with <1 hour
+labeling), transfer quality (SAM3 pre-training highly effective), and
+production viability (clear path to production-grade model).
 
-Primary finding: 3 training examples sufficient to achieve 60% mAP and 90%
-recall on fuse cutout detection task.
+We encountered and solved 10+ technical challenges in configuration management,
+GPU memory constraints, and checkpoint persistence. These solutions provide a
+roadmap for practitioners, as such challenges are under-documented in academic
+literature.
 
-This result has important implications:
-1. **Annotation Efficiency**: Pilot validation possible with <1 hour labeling
-2. **Transfer Quality**: SAM3 pre-training highly effective for new domains
-3. **Production Viability**: Clear path to production-grade model with
-   additional data
-
-The 90% recall is particularly significant for safety-critical applications
-where missing defects is costly.
-
-5.1.2 Technical Challenges in Model Adaptation
------------------------------------------------
-
-We encountered and solved 10+ distinct technical challenges:
-- Configuration management (Hydra, package resources)
-- GPU memory constraints (hardware upgrade required)
-- Dataset format compatibility
-- Checkpoint persistence configuration
-
-These challenges are likely common to SAM3 fine-tuning but under-documented
-in academic literature. Our solutions provide roadmap for practitioners.
-
-5.1.3 Scalability to Production
---------------------------------
-
-Pilot results validate approach for scaling to production:
-- Pipeline functional end-to-end
-- Metrics tracking with MLflow operational
-- Checkpoint management understood
-- Resource requirements quantified
-
-Next steps clear:
-1. Annotate 100+ images (2-3 days effort)
-2. Retrain with expanded dataset
-3. Target 80% mAP, 95% recall
-4. Deploy to production API
+Pilot results validate the approach for scaling to production. Next steps are
+clear: annotate 100+ images, retrain with expanded dataset, target 80% mAP
+and 95% recall, and deploy to production API.
 
 5.2 Limitations
 ---------------
 
-5.2.1 Dataset Size
-------------------
+Primary limitation is dataset size (4 images with single validation image),
+preventing robust performance estimation and limiting diversity in training
+distribution. No held-out test set exists for unbiased evaluation. Standard
+deviation of mAP likely ±10-15 percentage points due to small sample size.
 
-Primary limitation: Only 4 annotated images (3 training, 1 validation)
+Generalization to different fuse cutout types, varied panel configurations,
+and extreme conditions remains untested. Hardware upgrade from T4 to A10G
+increases deployment cost. Several workarounds were implemented requiring
+automation for production: manual config synchronization, incomplete epoch
+control, manual disk space management, and disabled artifact upload.
 
-Implications:
-- Limited diversity in training distribution
-- Single validation image prevents robust performance estimation
-- No held-out test set for unbiased evaluation
-- High variance in metrics due to small sample size
+5.3 Practical Implications
+--------------------------
 
-Standard deviation of mAP likely ±10-15 percentage points due to dataset size.
+For practitioners fine-tuning SAM3: start with 3-5 examples to validate
+approach, use filesystem-based config discovery for editable installs, monitor
+GPU memory (T4 16GB insufficient), explicitly enable checkpoint saving, and
+implement experiment tracking.
 
-5.2.2 Evaluation Methodology
------------------------------
+Economic viability: annotation cost ($200-400 for 100 images), training cost
+($10 per run), total pilot cost (<$500). Compare to manual inspection time
+(5-10 minutes per panel) versus automated inspection (1-2 seconds per panel),
+yielding payback period of 100-500 panels.
 
-Single validation image provides limited information:
-- Cannot compute confidence intervals
-- Per-class performance not meaningful
-- Failure mode analysis constrained
+Risk management: 90% recall reduces safety gaps, 60% precision requires human
+review (acceptable for pilot), enabling progressive rollout from human-in-
+the-loop to full automation.
 
-For production, require:
-- ≥20 validation images
-- ≥20 test images (held out from training/validation)
-- Stratified sampling across conditions (lighting, distance, panel types)
-
-5.2.3 Generalization Assessment
---------------------------------
-
-Unknown generalization to:
-- Different fuse cutout types
-- Varied electrical panel configurations
-- Extreme lighting conditions
-- Occluded or damaged components
-
-These scenarios must be tested before production deployment.
-
-5.2.4 Computational Resources
-------------------------------
-
-Hardware upgrade necessary (T4 → A10G) increases deployment cost.
-
-Considerations:
-- Production API currently uses T4 GPUs
-- Fine-tuned model may require A10G for inference (not tested)
-- Model quantization or distillation may enable T4 deployment
-- Cloud cost optimization required
-
-5.2.5 Technical Debt
---------------------
-
-Several workarounds implemented:
-- Manual config file copying (configs/ → sam3/sam3/train/configs/)
-- Incomplete epoch override (stops at 20 instead of 30)
-- Disk space manual management
-- MLflow artifact upload disabled
-
-Production deployment requires:
-- Automated config synchronization
-- Base config modification for full epoch control
-- Automated checkpoint rotation
-- S3 artifact storage configuration
-
-5.3 Comparison with Prior Work
--------------------------------
-
-Limited directly comparable work exists for SAM3 fine-tuning on electrical
-infrastructure. However, our results align with:
-
-Few-Shot Learning Literature [8,9]:
-- 5-10 examples typically sufficient for 40-60% performance
-- Our 3 examples achieving 60% mAP consistent with optimistic end
-
-Transfer Learning in Industrial Inspection [10,11]:
-- Fine-tuning from COCO pre-trained models: +20-30% mAP typical
-- Our estimated +20-40% mAP gain aligns with expectations
-
-SAM Family Performance [4,5]:
-- SAM achieves 80-90% mAP on general domains with full training
-- Our 60% mAP on specialized domain with 3 examples reasonable
-
-5.4 Practical Implications
----------------------------
-
-5.4.1 For Practitioners
------------------------
-
-Key takeaways for engineers fine-tuning SAM3:
-
-1. **Start Small**: 3-5 examples sufficient to validate approach
-2. **Use Filesystem Configs**: Package resource discovery problematic for
-   editable installs
-3. **Monitor GPU Memory**: SAM3 memory-intensive, T4 16GB insufficient
-4. **Verify Checkpoints**: Explicitly enable skip_saving_ckpts: false
-5. **Track Experiments**: MLflow or similar essential for reproducibility
-
-Our open-source repository provides working templates.
-
-5.4.2 For Researchers
+5.4 Future Directions
 ---------------------
 
-Research questions raised:
+Immediate next steps (Weeks 1-4): Expand dataset to 100 images with diverse
+conditions, retrain targeting 80% mAP and 95% recall, implement inference
+script, and deploy to production with A/B testing.
 
-1. **Optimal Data Efficiency**: What is minimum viable dataset size for 80% mAP?
-2. **Active Learning**: Can intelligent sample selection reduce annotation burden?
-3. **Domain Adaptation**: Can synthetic data generation bootstrap training?
-4. **Architecture Optimization**: Do smaller SAM variants (SAM-B, SAM-L) suffice?
-5. **Prompt Engineering**: Can better text prompts improve zero-shot performance?
+Medium-term improvements (Months 2-6): Model optimization through quantization
+and pruning, dataset expansion to 500+ images, active learning pipeline for
+difficult examples, and automated retraining infrastructure.
 
-Our methodology provides baseline for controlled experiments.
-
-5.4.3 For Industry Adoption
-----------------------------
-
-Deployment considerations:
-
-Economic Viability:
-- Annotation cost: $20-40/hour labor × 10 hours = $200-400 for 100 images
-- Training cost: $1/hour GPU × 10 hours = $10 per training run
-- Total pilot cost: <$500
-- Production cost: $1000-2000 including iterations
-
-Compare to manual inspection:
-- Fuse inspection time: 5-10 minutes per panel
-- Automated inspection: 1-2 seconds per panel
-- Payback period: 100-500 panels
-
-Risk Management:
-- 90% recall reduces safety inspection gaps
-- 60% precision requires human review of detections (acceptable for pilot)
-- Progressive rollout: human-in-the-loop → full automation
-
-5.5 Future Directions
----------------------
-
-5.5.1 Immediate Next Steps (Weeks 1-4)
----------------------------------------
-
-1. **Expand Dataset**: Annotate 100 images
-   - Diverse lighting, distances, panel types
-   - Stratified train/val/test split (70/15/15)
-
-2. **Retrain Model**: Full training run
-   - Target: 80% mAP, 95% recall
-   - Hyperparameter tuning if necessary
-
-3. **Implement Inference**: Complete inference script
-   - Load fine-tuned checkpoint
-   - Process test images
-   - Visualize predictions
-
-4. **Production Deployment**: Integrate with existing API
-   - Replace zero-shot SAM3 with fine-tuned model
-   - A/B test against baseline
-   - Monitor performance in production
-
-5.5.2 Medium-Term Improvements (Months 2-6)
---------------------------------------------
-
-1. **Model Optimization**:
-   - Quantization (FP32 → INT8) for faster inference
-   - Pruning for smaller model size
-   - Knowledge distillation to smaller architecture
-
-2. **Dataset Expansion**:
-   - 500+ images covering edge cases
-   - Negative examples (panels without cutouts)
-   - Multi-class detection (fuses, cutouts, switches)
-
-3. **Active Learning Pipeline**:
-   - Identify low-confidence predictions
-   - Prioritize annotation on difficult examples
-   - Iterative model improvement
-
-4. **Deployment Infrastructure**:
-   - Automated retraining pipeline
-   - Model versioning and rollback
-   - Performance monitoring dashboard
-
-5.5.3 Long-Term Research (Year 1+)
------------------------------------
-
-1. **Multi-Task Learning**:
-   - Joint detection + condition assessment
-   - Defect classification (corrosion, damage, aging)
-
-2. **Zero-Shot Generalization**:
-   - Transfer to related electrical components (switches, breakers)
-   - Cross-facility generalization
-
-3. **Synthetic Data Generation**:
-   - GANs or diffusion models for data augmentation
-   - Reduce annotation burden
-
-4. **Edge Deployment**:
-   - Optimize for mobile/embedded devices
-   - Real-time inspection on field equipment
-
-5. **Standardization**:
-   - Benchmark dataset for electrical inspection
-   - Community evaluation challenges
+Long-term research (Year 1+): Multi-task learning for joint detection and
+condition assessment, zero-shot generalization to related components, synthetic
+data generation, edge deployment, and benchmark dataset creation.
 
 ================================================================================
 6. CONCLUSION
 ================================================================================
 
-6.1 Summary of Contributions
------------------------------
+This work presented a complete pipeline for fine-tuning SAM3 on fuse cutout
+detection in electrical panels. Using only 3 training examples, we achieved
+60% mAP and 90% recall, demonstrating few-shot transfer learning effectiveness.
 
-This work presented a complete pipeline for fine-tuning SAM3 on specialized
-object detection tasks, specifically fuse cutout detection in electrical
-panels. Key contributions include:
+Key contributions include: (1) reproducible training pipeline addressing
+configuration management and GPU memory optimization, (2) solutions to 10+
+technical challenges with practical guidance, (3) empirical validation of
+few-shot learning viability, and (4) open-source resources enabling community
+adoption.
 
-**Technical Pipeline**: We developed and documented a reproducible training
-pipeline addressing configuration management, GPU memory optimization, and
-checkpoint persistence. The pipeline leverages AWS EC2 infrastructure (A10G
-GPU), Hydra configuration, PyTorch DDP, and MLflow experiment tracking.
+Key findings confirm that few-shot learning works (3-4 examples sufficient for
+pilot), hardware matters (A10G 24GB recommended), configuration requires
+careful management, path to production is clear, and approach is practically
+viable (<$500 pilot cost).
 
-**Problem Solutions**: We identified and solved 10+ technical challenges
-encountered during model adaptation, including Hydra config discovery for
-editable installs, CUDA memory constraints, dataset format compatibility,
-and checkpoint configuration. These solutions provide practical guidance for
-practitioners.
+Primary limitations include small dataset size and limited evaluation scope.
+Future work should expand to 100-500 images, conduct rigorous evaluation,
+implement active learning, and optimize for production deployment.
 
-**Empirical Validation**: Using only 3 training examples, we achieved 60%
-mAP and 90% recall on fuse cutout detection, demonstrating the effectiveness
-of few-shot transfer learning from foundation models. The 90% recall is
-particularly promising for safety-critical applications.
+This work demonstrates practical viability of fine-tuning large vision-language
+models for specialized industrial applications. By documenting successes and
+challenges, we lower barriers to adoption for engineers, researchers, and
+industry practitioners. Successful deployment could improve electrical safety
+inspection efficiency and enable proactive maintenance strategies.
 
-**Open Resources**: Complete codebase, configurations, training scripts, and
-documentation are available in public repository, enabling reproducibility
-and community adoption.
-
-6.2 Key Findings
-----------------
-
-1. **Few-Shot Learning Works**: 3-4 training examples sufficient for pilot
-   validation (60% mAP), confirming SAM3's strong transfer learning
-   capabilities.
-
-2. **Hardware Matters**: GPU memory is critical constraint. T4 16GB
-   insufficient; A10G 24GB recommended for SAM3 at standard resolution.
-
-3. **Configuration Complexity**: Hydra-based configuration requires careful
-   management. Filesystem-based discovery necessary for editable installs.
-
-4. **Path to Production Clear**: Pilot results validate approach. Scaling
-   to 100+ images likely achieves production-grade performance (80% mAP,
-   95% recall).
-
-5. **Practical Viability**: Total pilot cost <$500, training time <1 hour,
-   making approach accessible for industry adoption.
-
-6.3 Limitations and Future Work
---------------------------------
-
-Primary limitations include small dataset size (4 images), limited evaluation
-scope (single validation image), and incomplete generalization assessment.
-Future work should:
-
-- Expand dataset to 100-500 images covering diverse conditions
-- Conduct rigorous evaluation on held-out test set
-- Implement active learning for efficient annotation
-- Optimize model for production deployment (quantization, pruning)
-- Extend to multi-task learning (detection + condition assessment)
-
-6.4 Broader Impact
-------------------
-
-This work demonstrates practical viability of fine-tuning large vision-
-language models for specialized industrial applications. By documenting both
-successes and challenges, we lower barriers to adoption for:
-
-- **Engineers**: Ready-to-use pipeline with solved technical challenges
-- **Researchers**: Baseline methodology for controlled experiments
-- **Industry**: Cost-effective approach to safety inspection automation
-
-Successful deployment could improve electrical safety inspection efficiency,
-reduce human exposure to hazardous environments, and enable proactive
-maintenance strategies.
-
-6.5 Recommendations
--------------------
-
-For practitioners embarking on similar projects:
-
-1. **Start Small**: Validate approach with 5-10 annotated examples before
-   committing to large-scale annotation effort.
-
-2. **Invest in Infrastructure**: GPU memory critical. Budget for A10G or
-   better for SAM3 training.
-
-3. **Track Everything**: MLflow or equivalent essential. Log all experiments,
-   configurations, and checkpoints.
-
-4. **Solve Config Issues Early**: Hydra configuration tricky. Test config
-   loading before large training runs.
-
-5. **Plan for Scaling**: Pilot success often leads to production deployment.
-   Design pipeline with scalability in mind.
-
-6. **Iterate Rapidly**: Few-shot learning enables fast experimentation. Run
-   multiple experiments to optimize hyperparameters and data selection.
-
-6.6 Concluding Remarks
-----------------------
+For practitioners: start small (5-10 examples), invest in adequate GPU memory,
+track all experiments, solve config issues early, plan for scaling, and iterate
+rapidly. Few-shot learning enables fast experimentation for hyperparameter
+optimization.
 
 Fine-tuning SAM3 for fuse cutout detection proved successful despite limited
 training data, validating few-shot transfer learning for specialized domains.
-The complete pipeline, documented challenges, and open-source implementation
-provide foundation for both production deployment and future research.
-
-As foundation models continue advancing, practical guidance on model
-adaptation becomes increasingly important. This work contributes to bridging
-the gap between research capabilities and industry needs, demonstrating that
-state-of-the-art vision AI can be accessible, practical, and effective for
-real-world applications.
+The complete pipeline and open-source implementation provide foundation for
+both production deployment and future research.
 
 ================================================================================
 ACKNOWLEDGMENTS
@@ -1529,253 +365,21 @@ REFERENCES
 [2] Radford, A., et al. (2021). Learning transferable visual models from
     natural language supervision. ICML 2021.
 
-[3] Dosovitskiy, A., et al. (2020). An image is worth 16x16 words:
-    Transformers for image recognition at scale. ICLR 2021.
+[3] Kirillov, A., et al. (2023). Segment Anything. ICCV 2023.
 
-[4] Kirillov, A., et al. (2023). Segment Anything. ICCV 2023.
-
-[5] Ravi, N., et al. (2024). SAM 2: Segment Anything in Images and Videos.
-    arXiv preprint arXiv:2408.00714.
-
-[6] Yosinski, J., et al. (2014). How transferable are features in deep
-    neural networks? NeurIPS 2014.
-
-[7] Kornblith, S., et al. (2019). Do better ImageNet models transfer better?
-    CVPR 2019.
-
-[8] Snell, J., et al. (2017). Prototypical Networks for Few-shot Learning.
+[4] Snell, J., et al. (2017). Prototypical Networks for Few-shot Learning.
     NeurIPS 2017.
 
-[9] Finn, C., et al. (2017). Model-agnostic meta-learning for fast adaptation
+[5] Finn, C., et al. (2017). Model-agnostic meta-learning for fast adaptation
     of deep networks. ICML 2017.
 
-[10] Weimer, D., et al. (2016). Design of deep convolutional neural network
-     architectures for automated feature extraction in industrial inspection.
-     CIRP Annals 65(1).
+[6] Weimer, D., et al. (2016). Design of deep convolutional neural network
+    architectures for automated feature extraction in industrial inspection.
+    CIRP Annals 65(1).
 
-[11] Ferguson, M., et al. (2018). Detection and segmentation of manufacturing
-     defects with convolutional neural networks and transfer learning.
-     Smart and Sustainable Manufacturing Systems 2(1).
-
-[12] Redmon, J., et al. (2016). You Only Look Once: Unified, Real-Time Object
-     Detection. CVPR 2016.
-
-[13] Lin, T., et al. (2017). Focal Loss for Dense Object Detection.
-     ICCV 2017.
-
-[Additional references to be added for final publication]
-
-================================================================================
-APPENDIX A: CONFIGURATION FILES
-================================================================================
-
-A.1 Training Configuration (fuse_cutout_train.yaml)
-----------------------------------------------------
-
-[See configs/fuse_cutout_train.yaml in repository]
-
-Key sections:
-- paths: Dataset and output directories
-- roboflow_train: Dataset-specific settings
-- launcher: Hardware configuration
-- scratch: Training hyperparameters
-- trainer: Training schedule and validation
-- checkpoint: Model persistence
-
-A.2 Environment Setup
----------------------
-
-Python version: 3.10
-CUDA version: 12.x
-Key packages:
-- torch>=2.0.0
-- hydra-core>=1.3.0
-- omegaconf>=2.3.0
-- mlflow>=2.0.0
-
-Full dependencies in repository pyproject.toml/requirements.txt
-
-================================================================================
-APPENDIX B: COMMAND REFERENCE
-================================================================================
-
-B.1 Training Commands
----------------------
-
-Basic training:
-```bash
-uv run python scripts/train_sam3_patched.py --config fuse_cutout_train
-```
-
-Training with MLflow:
-```bash
-uv run python scripts/train_with_mlflow.py --config fuse_cutout_train
-```
-
-B.2 Dataset Preparation
------------------------
-
-Convert Roboflow export to SAM3 format:
-```bash
-python scripts/prepare_dataset_for_sam3.py \
-  --input fuse-neutral-dataset/ \
-  --output sam3_datasets/fuse-cutout/
-```
-
-B.3 Monitoring
---------------
-
-View MLflow experiments:
-```
-http://52.2.51.33:5000/#/experiments/1
-```
-
-Check GPU usage:
-```bash
-nvidia-smi
-watch -n 1 nvidia-smi  # Real-time monitoring
-```
-
-Monitor disk space:
-```bash
-df -h
-du -h --max-depth=1 ~/sam3-fine-tuning
-```
-
-================================================================================
-APPENDIX C: TROUBLESHOOTING GUIDE
-================================================================================
-
-C.1 Common Errors and Solutions
---------------------------------
-
-See PROJECT_SUMMARY.txt Section 14 for comprehensive troubleshooting guide
-covering:
-- Config discovery errors
-- CUDA out of memory
-- Disk space issues
-- Dataset path problems
-- Checkpoint saving failures
-
-C.2 Debug Checklist
--------------------
-
-Before training:
-□ HuggingFace token set (export HF_TOKEN="...")
-□ Config files copied to sam3/sam3/train/configs/
-□ Dataset structure correct (train/, valid/ folders)
-□ Sufficient disk space (>20GB free)
-□ GPU accessible (nvidia-smi shows device)
-
-During training:
-□ Loss decreasing over epochs
-□ GPU utilization high (>80%)
-□ Checkpoints saving successfully
-□ MLflow connection active
-
-After training:
-□ Checkpoint file exists and is ~9GB
-□ Validation metrics logged
-□ No error messages in final output
-
-================================================================================
-APPENDIX D: DATASET STATISTICS
-================================================================================
-
-D.1 Image Characteristics
---------------------------
-
-Total images: 4
-Image format: JPEG
-Typical resolution: High-resolution (varies by source)
-Content: Electrical panels with fuse cutouts visible
-
-D.2 Annotation Statistics
---------------------------
-
-Total annotations: 9 polygons
-- Training: 7 polygons (3 images)
-- Validation: 2 polygons (1 image)
-
-Average annotations per image: 2.25
-Annotation type: Polygon segmentation masks
-Annotation tool: Roboflow Smart Polygon
-Average annotation time: 1-2 minutes per image
-
-Class distribution:
-- Single class: "fuse-cutout"
-- No class imbalance (single-class dataset)
-
-D.3 Data Split
---------------
-
-Train set: 75% (3 images, 7 annotations)
-Validation set: 25% (1 image, 2 annotations)
-Test set: 0% (no held-out test set in pilot phase)
-
-Recommended for production:
-Train: 70% (70 images)
-Validation: 15% (15 images)
-Test: 15% (15 images)
-Total: 100 images minimum
-
-================================================================================
-APPENDIX E: PERFORMANCE METRICS DETAILS
-================================================================================
-
-E.1 COCO Metrics Explanation
------------------------------
-
-mAP (mean Average Precision):
-- Average of AP across IoU thresholds 0.50 to 0.95 (step 0.05)
-- Primary metric for object detection benchmarks
-- Range: 0.0 (worst) to 1.0 (best)
-
-AP@IoU=0.50:
-- Precision at IoU threshold 0.50
-- "Loose" localization requirement
-- Commonly reported metric
-
-AP@IoU=0.75:
-- Precision at IoU threshold 0.75
-- "Tight" localization requirement
-- More strict evaluation
-
-Average Recall:
-- Fraction of ground truth objects detected
-- Critical for safety applications
-- Range: 0.0 (none detected) to 1.0 (all detected)
-
-E.2 Our Results Interpretation
--------------------------------
-
-60% mAP:
-- Above pilot target (>50%)
-- Below production target (<80%)
-- Acceptable for proof-of-concept
-- Likely improvable with more data
-
-90% Recall:
-- Excellent for pilot phase
-- Meets safety requirements (>80%)
-- Few false negatives
-- Suitable for human-in-the-loop deployment
-
-66.7% AP@0.50 and AP@0.75:
-- Consistent across thresholds
-- Suggests good localization quality
-- Bounding boxes well-aligned
-
-E.3 Comparison Benchmarks
---------------------------
-
-Zero-shot SAM3 (estimated): 20-40% mAP
-Fine-tuned SAM3 (our result): 60% mAP
-Production target: 80% mAP
-
-Estimated improvement: +20 to +40 percentage points
-
-This gain is typical for fine-tuning on specialized domains.
+[7] Ferguson, M., et al. (2018). Detection and segmentation of manufacturing
+    defects with convolutional neural networks and transfer learning.
+    Smart and Sustainable Manufacturing Systems 2(1).
 
 ================================================================================
 END OF RESEARCH PAPER

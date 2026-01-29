@@ -1,0 +1,203 @@
+================================================================================
+                    TESTING YOUR FINE-TUNED SAM3 MODEL
+================================================================================
+
+This guide explains how to test your fine-tuned model on the test images.
+
+================================================================================
+STEP 1: PREPARE TEST IMAGES
+================================================================================
+
+You mentioned you have a folder: photos/test_fuse_neutral/
+
+Make sure this folder contains the images you want to test on.
+
+================================================================================
+STEP 2: UPLOAD TO EC2 (If Running on EC2)
+================================================================================
+
+From your local machine, upload the test images to EC2:
+
+    scp -r photos/test_fuse_neutral ubuntu@<your-ec2-ip>:~/sam3-fine-tuning/photos/
+
+Or use any file transfer tool (FileZilla, VSCode SSH, etc.)
+
+================================================================================
+STEP 3: RUN THE TEST SCRIPT
+================================================================================
+
+SSH into your EC2 instance:
+
+    ssh ubuntu@<your-ec2-ip>
+
+Navigate to the project directory:
+
+    cd ~/sam3-fine-tuning
+
+Run the test script:
+
+    uv run python scripts/test_finetuned_model.py \
+      --checkpoint experiments/fuse_cutout/checkpoints/checkpoint.pt \
+      --image-dir photos/test_fuse_neutral \
+      --text-prompt "fuse cutout" \
+      --threshold 0.5 \
+      --output test_results
+
+================================================================================
+SCRIPT PARAMETERS
+================================================================================
+
+Required:
+  --checkpoint PATH          Path to your fine-tuned checkpoint (.pt file)
+
+One of these is required:
+  --image PATH              Single image to test
+  --image-dir PATH          Directory of images to test
+
+Optional:
+  --text-prompt TEXT        Detection prompt (default: "fuse cutout")
+  --threshold FLOAT         Confidence threshold 0-1 (default: 0.5)
+  --output DIR              Output directory (default: test_results)
+  --device cuda|cpu         Device to use (default: cuda)
+
+================================================================================
+EXAMPLE COMMANDS
+================================================================================
+
+1. Test on single image:
+
+    uv run python scripts/test_finetuned_model.py \
+      --checkpoint experiments/fuse_cutout/checkpoints/checkpoint.pt \
+      --image photos/test_fuse_neutral/image_1.jpg \
+      --output test_results
+
+2. Test on all images in directory:
+
+    uv run python scripts/test_finetuned_model.py \
+      --checkpoint experiments/fuse_cutout/checkpoints/checkpoint.pt \
+      --image-dir photos/test_fuse_neutral \
+      --output test_results
+
+3. Test with higher confidence threshold:
+
+    uv run python scripts/test_finetuned_model.py \
+      --checkpoint experiments/fuse_cutout/checkpoints/checkpoint.pt \
+      --image-dir photos/test_fuse_neutral \
+      --threshold 0.7 \
+      --output test_results_high_threshold
+
+4. Test with different prompt:
+
+    uv run python scripts/test_finetuned_model.py \
+      --checkpoint experiments/fuse_cutout/checkpoints/checkpoint.pt \
+      --image-dir photos/test_fuse_neutral \
+      --text-prompt "fuse neutral" \
+      --output test_results_fuse_neutral
+
+================================================================================
+WHAT YOU'LL GET
+================================================================================
+
+After running the script, the output directory will contain:
+
+1. Visual results (one per image):
+   - test_results/image_1_result.jpg
+   - test_results/image_2_result.jpg
+   - etc.
+
+   Each image shows:
+   - Original image
+   - Green bounding boxes around detected fuse cutouts
+   - Confidence scores on each detection
+
+2. JSON results file:
+   - test_results/results.json
+
+   Contains all detection data (boxes, scores, image sizes) in JSON format
+
+3. Terminal output showing:
+   - Number of detections per image
+   - Average confidence scores
+   - Summary statistics
+
+================================================================================
+STEP 4: DOWNLOAD RESULTS (If on EC2)
+================================================================================
+
+Download the results from EC2 to your local machine:
+
+    scp -r ubuntu@<your-ec2-ip>:~/sam3-fine-tuning/test_results ./
+
+Then open the image files to see the detections!
+
+================================================================================
+INTERPRETING RESULTS
+================================================================================
+
+Good Signs:
+✓ Detections on all or most fuse cutouts
+✓ Confidence scores > 0.6
+✓ Tight bounding boxes around objects
+✓ Few false positives (detections on non-fuse objects)
+
+Needs Improvement:
+✗ Many missed detections (low recall)
+✗ Confidence scores < 0.5
+✗ Loose or incorrect bounding boxes
+✗ Many false positives
+
+Based on your training metrics:
+- Expected recall: ~90% (should find 9 out of 10 fuse cutouts)
+- Expected mAP: 60% (some imperfect boxes expected)
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Error: "Checkpoint not found"
+→ Check the checkpoint path is correct
+→ Run: ls experiments/fuse_cutout/checkpoints/
+
+Error: "CUDA out of memory"
+→ Use --device cpu instead
+→ Or process one image at a time with --image
+
+Error: "SAM3 not found"
+→ Make sure you're in the sam3-fine-tuning directory
+→ Check sam3 folder exists
+
+No detections found:
+→ Try lower threshold: --threshold 0.3
+→ Try different prompt: --text-prompt "fuse neutral"
+→ Check if images are correct format (JPG, PNG)
+
+================================================================================
+NEXT STEPS AFTER TESTING
+================================================================================
+
+If results look good (high recall, few false positives):
+1. Document the test results
+2. Compare with validation metrics
+3. Consider deploying to production API
+4. Annotate more training data to improve further
+
+If results need improvement:
+1. Collect more training data (aim for 100+ images)
+2. Include difficult examples in training set
+3. Try different text prompts
+4. Retrain with larger dataset
+
+================================================================================
+QUICK START CHECKLIST
+================================================================================
+
+□ Test images in photos/test_fuse_neutral/
+□ Checkpoint exists at experiments/fuse_cutout/checkpoints/checkpoint.pt
+□ Run test script with --image-dir
+□ Review visualizations in test_results/
+□ Check summary statistics in terminal
+□ Decide if model is good enough or needs more training
+
+================================================================================
+END OF GUIDE
+================================================================================
