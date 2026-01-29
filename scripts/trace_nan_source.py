@@ -35,6 +35,11 @@ def check_for_nan(tensor, name):
         return has_nan
 
     if isinstance(tensor, torch.Tensor):
+        # For integer tensors, convert to float for NaN checking
+        if tensor.dtype in [torch.uint8, torch.int8, torch.int16, torch.int32, torch.int64]:
+            print(f"  ✓ {name}: shape={list(tensor.shape)}, dtype={tensor.dtype}, min={tensor.min().item()}, max={tensor.max().item()}")
+            return False
+
         has_nan = torch.isnan(tensor).any().item()
         has_inf = torch.isinf(tensor).any().item()
 
