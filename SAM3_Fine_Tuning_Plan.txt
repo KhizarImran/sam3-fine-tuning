@@ -1,0 +1,213 @@
+===============================================================================
+                    SAM3 FINE-TUNING PLAN FOR FUSE CUTOUT DETECTION
+===============================================================================
+
+CURRENT STATUS
+--------------
+We have a working SAM3 inference API on EC2 (g4dn.xlarge with Tesla T4 GPU) that
+uses the pre-trained facebook/sam3 model. To improve accuracy for fuse cutout
+detection, we need to fine-tune it on our custom dataset.
+
+Current Setup:
+  - EC2 instance with Docker-based SAM3 API running on port 8000
+  - S3 bucket (dno-datasets) with raw and processed images
+  - Batch processing scripts operational
+  - Need to add: Training capability
+
+===============================================================================
+FINE-TUNING PROCESS - 7 PHASES
+===============================================================================
+
+PHASE 1: ENVIRONMENT SETUP (4-8 hours)
+---------------------------------------
+Tasks:
+  - Clone full SAM3 repository on EC2 (not just inference model)
+  - Install training dependencies
+  - Verify GPU and HuggingFace authentication
+
+Output: Training environment ready on EC2
+
+-------------------------------------------------------------------------------
+
+PHASE 2: DATA PREPARATION (1-2 weeks)
+--------------------------------------
+Requirements:
+  - Pilot: 100-200 labeled images minimum
+  - Production: 500-1000+ images recommended
+  - Split: 80% train / 10% validation / 10% test
+
+Data Format:
+  - COCO-style JSON with bounding boxes and segmentation masks
+  - Single class: "fuse_cutout"
+
+Annotation Options:
+  - Roboflow (recommended - web-based, free tier available)
+  - CVAT (self-hosted, open-source)
+  - Label Studio
+
+Tasks:
+  - Download images from S3
+  - Label images using chosen tool (1-2 min per image)
+  - Organize into train/valid/test folders
+  - Export in COCO format
+
+Output: Labeled dataset ready in ~/sam3_fuse_cutout_dataset/
+
+-------------------------------------------------------------------------------
+
+PHASE 3: TRAINING CONFIGURATION (1-2 hours)
+--------------------------------------------
+Tasks:
+  - Create custom YAML configuration file
+  - Set hyperparameters (epochs, batch size, learning rate)
+  - Configure paths and model settings
+
+Key Settings:
+  - Batch size: 2 (for Tesla T4 16GB)
+  - Epochs: 50 for pilot
+  - Image size: 1024
+  - Mixed precision training enabled
+
+Output: Configuration file at ~/sam3/configs/fuse_cutout/fuse_cutout_full_ft.yaml
+
+-------------------------------------------------------------------------------
+
+PHASE 4: TRAINING EXECUTION (2-24 hours automated)
+---------------------------------------------------
+Tasks:
+  - Run training script with custom config
+  - Monitor GPU usage and logs
+  - Wait for training completion
+
+Duration Estimates:
+  - 100 images: 2-3 hours
+  - 200 images: 4-6 hours
+  - 500 images: 8-12 hours
+  - 1000 images: 16-24 hours
+
+Output: Fine-tuned model checkpoint at ~/sam3/experiments/fuse_cutout/checkpoints/best.pt
+
+-------------------------------------------------------------------------------
+
+PHASE 5: MODEL EVALUATION (2-3 days)
+-------------------------------------
+Tasks:
+  - Run evaluation on test set
+  - Review metrics (mAP, Precision, Recall)
+  - Visual inspection of predictions
+  - Compare with pre-trained baseline
+
+Success Criteria:
+  - Pilot: mAP >0.6, Precision >0.7, Recall >0.8
+  - Production: mAP >0.75, Precision >0.85, Recall >0.90
+
+Decision:
+  - If >20% improvement: Deploy to production
+  - If <10% improvement: Need more data
+  - If worse: Check for training issues
+
+Output: Evaluation report and decision to deploy or iterate
+
+-------------------------------------------------------------------------------
+
+PHASE 6: PRODUCTION DEPLOYMENT (1 day)
+---------------------------------------
+Tasks:
+  - Copy fine-tuned model to API directory
+  - Update model loading code in API
+  - Rebuild Docker image with new model
+  - Deploy using blue-green strategy (test on port 8001 first)
+  - Switch traffic to new model if successful
+  - Keep rollback plan ready
+
+Testing:
+  - Health check endpoint
+  - Sample detection requests
+  - Batch processing test on S3 images
+
+Output: Fine-tuned model running in production API
+
+-------------------------------------------------------------------------------
+
+PHASE 7: MONITORING & ITERATION (Ongoing)
+------------------------------------------
+Monitoring:
+  - API response time and accuracy
+  - False positive/negative rates
+  - GPU utilization
+
+Iteration Cycle:
+  1. Collect feedback from production results
+  2. Identify failure cases
+  3. Add 100-200 new images addressing failures
+  4. Retrain with expanded dataset
+  5. A/B test new version
+  6. Deploy if >5% improvement
+
+Schedule:
+  - Initial: 200 images (pilot)
+  - Month 2: Add 300 more, retrain (v2)
+  - Month 3: Add 500 more, retrain (v3)
+  - Ongoing: Quarterly retraining
+
+Output: Continuously improving model with version tracking
+
+===============================================================================
+RESOURCE REQUIREMENTS
+===============================================================================
+
+Compute:
+  - EC2 g4dn.xlarge (already provisioned)
+  - 20+ GB free disk space
+
+Human Effort:
+  - Data labeling: 20-40 hours (500 images)
+  - Setup & training: 4-8 hours (first time)
+  - Evaluation: 4-6 hours
+  - Deployment: 2-4 hours
+
+Cost:
+  - Training: ~$12-15 for 24 hours
+  - Total pilot cost: ~$50-100
+
+===============================================================================
+RISKS & MITIGATION
+===============================================================================
+
+Risk: Insufficient data
+  Mitigation: Start with 200+ images, expand iteratively
+
+Risk: GPU memory issues
+  Mitigation: Reduce batch size, use gradient accumulation
+
+Risk: Training interrupted
+  Mitigation: Use checkpointing, resume capability
+
+Risk: Worse than baseline
+  Mitigation: Compare metrics before deployment, keep rollback plan
+
+===============================================================================
+TIMELINE
+===============================================================================
+
+Week 1-2: Label 200 images
+Week 3: Setup environment and train
+Week 4: Evaluate and deploy
+
+Total: 3-4 weeks to first deployment
+
+===============================================================================
+NEXT STEPS
+===============================================================================
+
+1. Review plan with team
+2. Set up Roboflow account
+3. Download 200 images from S3
+4. Begin labeling (target: 100 images week 1)
+5. Schedule EC2 training window
+6. Execute phases 1-6
+7. Deploy and monitor
+
+===============================================================================
+END OF DOCUMENT
+===============================================================================

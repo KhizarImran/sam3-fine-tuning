@@ -1,7 +1,5 @@
-================================================================================
                     FINE-TUNING SAM3 FOR FUSE CUTOUT DETECTION
                      IN ELECTRICAL PANEL INSPECTION SYSTEMS
-================================================================================
 
 Authors: Khizar Imran
 Institution: M Grooup Energy Data Insight Ltd.
@@ -10,11 +8,9 @@ Date: January 28, 2026
 Contact: [To be filled]
 Repository: https://github.com/KhizarImran/sam3-fine-tuning
 
-================================================================================
 ABSTRACT
-================================================================================
 
-Automated detection of fuse cutouts in electrical panel images is crucial for
+Automated detection of fuse neutrals in electrical panel images is crucial for
 safety inspection and maintenance workflows. This paper presents a systematic
 approach to fine-tuning the Segment Anything Model 3 (SAM3) for domain-specific
 object detection in electrical infrastructure.
@@ -33,9 +29,7 @@ iterative model improvement in production systems.
 Keywords: Object Detection, Transfer Learning, SAM3, Electrical Inspection,
 Computer Vision, Fine-tuning, Few-shot Learning
 
-================================================================================
 1. INTRODUCTION
-================================================================================
 
 1.1 Background and Motivation
 ------------------------------
@@ -54,7 +48,7 @@ specialized domains like electrical infrastructure.
 1.2 Problem Statement and Objectives
 ------------------------------------
 
-We address how effectively SAM3 can be adapted to detect fuse cutouts using
+We address how effectively SAM3 can be adapted to detect fuse neutrals using
 minimal labeled data, what practical challenges arise in fine-tuning large
 vision-language models, and whether acceptable performance can be achieved
 with fewer than 10 training examples.
@@ -76,9 +70,7 @@ produce meaningful detection performance (60% mAP, 90% recall). All resources
 including codebase, configurations, and documentation are available in our
 public repository.
 
-================================================================================
 2. RELATED WORK
-================================================================================
 
 Foundation models have transformed computer vision, enabling transfer learning
 from pre-trained models to specialized domains with minimal data [1,2]. Meta's
@@ -94,9 +86,7 @@ significantly improve performance when starting from strong foundation models
 Our work addresses this gap by providing complete implementation details for
 SAM3 fine-tuning with solutions to practical engineering challenges.
 
-================================================================================
 3. METHODOLOGY
-================================================================================
 
 3.1 System Architecture
 -----------------------
@@ -109,10 +99,23 @@ PyTorch DDP and Hydra configuration, and (4) Experiment tracking with MLflow.
 -----------------------
 
 Source images were selected from electrical panel photographs with visible fuse
-cutouts. The dataset comprises 4 images: 3 training and 1 validation, with 9
-total annotations (7 training, 2 validation). Annotation was performed using
-Roboflow's Smart Polygon tool, taking 1-2 minutes per image. Data was exported
-in COCO format with polygon segmentation masks.
+cutouts. Annotation was performed using Roboflow's Smart Polygon tool, taking
+1-2 minutes per image. Data was exported in COCO format with polygon
+segmentation masks.
+
+Dataset composition:
+
++-------+--------+---------------------+--------------+-------------------+
+| Split | Images | Annotations (Total) | Fuse Neutrals | Source           |
++-------+--------+---------------------+--------------+-------------------+
+| Train |   3    |         7           |      6       | Panel photos      |
+| Valid |   1    |         2           |      2       | Test panel photo  |
++-------+--------+---------------------+--------------+-------------------+
+| Total |   4    |         9           |      8       |                   |
++-------+--------+---------------------+--------------+-------------------+
+
+The validation image represents a real-world test case with similar panel
+configuration and lighting conditions to evaluate model generalization.
 
 3.3 Infrastructure Setup
 ------------------------
@@ -190,9 +193,7 @@ Validation used COCO evaluation toolkit computing mAP across IoU thresholds
 Precision at IoU 0.50 and 0.75, and Average Recall. Predictions were saved to
 JSON format and compared against ground truth annotations.
 
-================================================================================
 4. RESULTS
-================================================================================
 
 4.1 Training Progression
 ------------------------
@@ -217,7 +218,7 @@ requirements where false negatives are costly. Consistent AP across IoU
 thresholds suggests good bounding box localization quality.
 
 Performance on medium objects (32² to 96² pixels) was 90%, matching the scale
-of fuse cutouts in our dataset. Visual inspection showed accurate bounding
+of fuse neutrals in our dataset. Visual inspection showed accurate bounding
 boxes with no systematic errors.
 
 4.3 Comparison with Baseline
@@ -239,9 +240,7 @@ Final checkpoint was 9.4GB including full model weights (~9GB), optimizer state
 (~300MB), and training metadata (~100MB). Model has ~640M parameters based on
 SAM3 ViT-H architecture.
 
-================================================================================
 5. DISCUSSION
-================================================================================
 
 5.1 Key Findings
 ----------------
@@ -269,7 +268,7 @@ preventing robust performance estimation and limiting diversity in training
 distribution. No held-out test set exists for unbiased evaluation. Standard
 deviation of mAP likely ±10-15 percentage points due to small sample size.
 
-Generalization to different fuse cutout types, varied panel configurations,
+Generalization to different fuse neutral types, varied panel configurations,
 and extreme conditions remains untested. Hardware upgrade from T4 to A10G
 increases deployment cost. Several workarounds were implemented requiring
 automation for production: manual config synchronization, incomplete epoch
@@ -307,11 +306,9 @@ Long-term research (Year 1+): Multi-task learning for joint detection and
 condition assessment, zero-shot generalization to related components, synthetic
 data generation, edge deployment, and benchmark dataset creation.
 
-================================================================================
 6. CONCLUSION
-================================================================================
 
-This work presented a complete pipeline for fine-tuning SAM3 on fuse cutout
+This work presented a complete pipeline for fine-tuning SAM3 on fuse neutral
 detection in electrical panels. Using only 3 training examples, we achieved
 60% mAP and 90% recall, demonstrating few-shot transfer learning effectiveness.
 
@@ -341,23 +338,19 @@ track all experiments, solve config issues early, plan for scaling, and iterate
 rapidly. Few-shot learning enables fast experimentation for hyperparameter
 optimization.
 
-Fine-tuning SAM3 for fuse cutout detection proved successful despite limited
+Fine-tuning SAM3 for fuse neutral detection proved successful despite limited
 training data, validating few-shot transfer learning for specialized domains.
 The complete pipeline and open-source implementation provide foundation for
 both production deployment and future research.
 
-================================================================================
 ACKNOWLEDGMENTS
-================================================================================
 
 We thank Meta AI Research for developing and open-sourcing the SAM3 model.
 AWS provided EC2 compute infrastructure. Roboflow's annotation tools enabled
 efficient dataset preparation. MLflow experiment tracking supported
 reproducible research practices.
 
-================================================================================
 REFERENCES
-================================================================================
 
 [1] Bommasani, R., et al. (2021). On the opportunities and risks of
     foundation models. arXiv preprint arXiv:2108.07258.
@@ -381,9 +374,7 @@ REFERENCES
     defects with convolutional neural networks and transfer learning.
     Smart and Sustainable Manufacturing Systems 2(1).
 
-================================================================================
 END OF RESEARCH PAPER
-================================================================================
 
 Document Version: 1.0
 Last Updated: January 28, 2026
@@ -396,4 +387,3 @@ https://github.com/KhizarImran/sam3-fine-tuning
 For questions or collaboration:
 [Contact information to be added]
 
-================================================================================
