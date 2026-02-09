@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Checkpoints and large model files
+*.pt
+*.pth
+*.ckpt
+experiments/*/checkpoints/
+experiments/*/checkpoints_backup/
+
+# Training outputs
+experiments/*/logs/
+experiments/*/tensorboard/
+experiments/*/dumps/
+*.log
+
+# Test results
+test_results*/
+validation_predictions_viz/
+val_exact/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MLflow
+mlruns/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# SAM3 submodule/clone
+sam3/

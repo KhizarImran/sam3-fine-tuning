@@ -1,0 +1,18 @@
+{
+  "dataset_name": "fuse-cutout-detection",
+  "total_images": 4,
+  "total_annotations": 9,
+  "categories": [
+    {
+      "id": 0,
+      "name": "fuse neutral",
+      "supercategory": "none"
+    }
+  ],
+  "format": "COCO",
+  "splits": [
+    "train",
+    "valid",
+    "test"
+  ]
+}
