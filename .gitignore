@@ -5,29 +5,58 @@ __pycache__/
 *.so
 .Python
 *.egg-info/
+.installed.cfg
+*.egg
 dist/
 build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 .venv/
 venv/
 env/
+ENV/
 
 # Checkpoints and large model files
 *.pt
 *.pth
 *.ckpt
+checkpoints/
 experiments/*/checkpoints/
 experiments/*/checkpoints_backup/
+experiments/
 
 # Training outputs
 experiments/*/logs/
 experiments/*/tensorboard/
 experiments/*/dumps/
 *.log
+logs/
+wandb/
 
 # Test results
 test_results*/
 validation_predictions_viz/
 val_exact/
+inference_results/
+results/
+output/
+
+# Data directories (too large for git)
+dataset/
+photos/
+sam3_datasets/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
 
 # IDEs
 .vscode/
@@ -40,6 +69,9 @@ val_exact/
 .DS_Store
 Thumbs.db
 
+# Claude Code
+.claude/
+
 # MLflow
 mlruns/
 
@@ -47,6 +79,10 @@ mlruns/
 tmp/
 temp/
 *.tmp
+
+# Environment
+.env
+.env.local
 
 # SAM3 submodule/clone
 sam3/
