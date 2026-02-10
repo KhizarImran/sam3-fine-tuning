@@ -1,0 +1,65 @@
+# @package _global_
+defaults:
+  - roboflow_v100/roboflow_v100_full_ft_100_images
+  - _self_
+
+# Override paths for fuse neutrals dataset
+paths:
+  roboflow_vl_100_root: "sam3_datasets"
+  experiment_log_dir: "experiments/fuse_neutrals"
+  bpe_path: "sam3/sam3/assets/bpe_simple_vocab_16e6.txt.gz"
+
+# Override dataset configuration
+roboflow_train:
+  num_images: null  # Use all available images (24 training images)
+  supercategory: "fuse-neutrals"  # Our dataset name
+
+# Override launcher settings for single GPU
+launcher:
+  num_nodes: 1
+  gpus_per_node: 1
+
+# Override training hyperparameters
+scratch:
+  batch_size: 2  # Increased from 1 - adjust if you get OOM errors
+  resolution: 1008  # Keep original resolution for RoPE compatibility
+  num_train_workers: 2  # Small number of workers
+  num_val_workers: 1  # Validation workers
+  max_ann_per_img: 50  # Max annotations per image
+
+# Seed for reproducibility
+seed: 42
+
+# Override validation dataset to use 'valid' instead of 'test'
+trainer:
+  max_epochs: 50  # More epochs since dataset is small
+  skip_first_val: false  # Run validation from start
+  val_epoch_freq: 5  # Validate every 5 epochs
+  skip_saving_ckpts: false  # Enable checkpoint saving
+  data:
+    val:
+      dataset:
+        img_folder: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/
+        ann_file: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json
+
+  # Override validation evaluator to use 'valid' instead of 'test'
+  meters:
+    val:
+      roboflow100:
+        detection:
+          pred_file_evaluators:
+            - _target_: sam3.eval.coco_eval_offline.CocoEvaluatorOfflineWithPredFileEvaluators
+              gt_path: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json
+              tide: False
+              iou_type: "bbox"
+
+# Override checkpoint settings to save model
+checkpoint:
+  save_dir: ${paths.experiment_log_dir}/checkpoints
+  save_freq: 10  # Save every 10 epochs
+  keep_last_n: 3  # Keep last 3 checkpoints
+
+# Learning rate schedule for small dataset
+optimizer:
+  lr: 5e-5  # Lower learning rate for fine-tuning
+  warmup_epochs: 5  # Warmup for first 5 epochs
