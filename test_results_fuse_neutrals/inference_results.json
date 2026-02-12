@@ -1,0 +1,150 @@
+{
+  "metadata": {
+    "timestamp": "2026-02-12T13:23:16.953107",
+    "checkpoint": "experiments/fuse_neutrals/checkpoints/checkpoint.pt",
+    "text_prompt": "fuse neutrals",
+    "confidence_threshold": 0.8,
+    "total_images": 6,
+    "total_detections": 6
+  },
+  "results": [
+    {
+      "image_name": "Image-34_jpg.rf.923fd5a012bad767346af3a01be6df17.jpg",
+      "image_path": "Find fuse neutrals.v5i.coco/test/Image-34_jpg.rf.923fd5a012bad767346af3a01be6df17.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            161.5358123779297,
+            336.870361328125,
+            279.4041748046875,
+            452.938720703125
+          ],
+          "score": 0.9862198829650879,
+          "category": "fuse neutrals"
+        }
+      ],
+      "avg_score": 0.9862198829650879,
+      "max_score": 0.9862198829650879
+    },
+    {
+      "image_name": "Image-40_jpg.rf.3669fb31cbed411cabdce3f0132d6c18.jpg",
+      "image_path": "Find fuse neutrals.v5i.coco/test/Image-40_jpg.rf.3669fb31cbed411cabdce3f0132d6c18.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            252.5926055908203,
+            142.8580780029297,
+            379.1615905761719,
+            248.9175262451172
+          ],
+          "score": 0.9794065356254578,
+          "category": "fuse neutrals"
+        }
+      ],
+      "avg_score": 0.9794065356254578,
+      "max_score": 0.9794065356254578
+    },
+    {
+      "image_name": "Image-43_jpg.rf.091061ba7905025e1062258601fc7af0.jpg",
+      "image_path": "Find fuse neutrals.v5i.coco/test/Image-43_jpg.rf.091061ba7905025e1062258601fc7af0.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            246.20626831054688,
+            134.52398681640625,
+            360.6686706542969,
+            233.04507446289062
+          ],
+          "score": 0.9858373999595642,
+          "category": "fuse neutrals"
+        }
+      ],
+      "avg_score": 0.9858373999595642,
+      "max_score": 0.9858373999595642
+    },
+    {
+      "image_name": "Image-52_jpg.rf.711a9eb664061c6f26f361304b6fdd45.jpg",
+      "image_path": "Find fuse neutrals.v5i.coco/test/Image-52_jpg.rf.711a9eb664061c6f26f361304b6fdd45.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            280.3795471191406,
+            188.1344757080078,
+            418.2439880371094,
+            278.125732421875
+          ],
+          "score": 0.9851042628288269,
+          "category": "fuse neutrals"
+        }
+      ],
+      "avg_score": 0.9851042628288269,
+      "max_score": 0.9851042628288269
+    },
+    {
+      "image_name": "Image-56_jpg.rf.02188c429e41bb1714a2da79cd66e934.jpg",
+      "image_path": "Find fuse neutrals.v5i.coco/test/Image-56_jpg.rf.02188c429e41bb1714a2da79cd66e934.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            188.73619079589844,
+            292.7232360839844,
+            318.82171630859375,
+            396.1013488769531
+          ],
+          "score": 0.9743271470069885,
+          "category": "fuse neutrals"
+        }
+      ],
+      "avg_score": 0.9743271470069885,
+      "max_score": 0.9743271470069885
+    },
+    {
+      "image_name": "Image-60_jpg.rf.9adba8bee1c3f24c4e3161d0e1f636fa.jpg",
+      "image_path": "Find fuse neutrals.v5i.coco/test/Image-60_jpg.rf.9adba8bee1c3f24c4e3161d0e1f636fa.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            239.9864959716797,
+            200.2749481201172,
+            338.15924072265625,
+            305.47064208984375
+          ],
+          "score": 0.9546119570732117,
+          "category": "fuse neutrals"
+        }
+      ],
+      "avg_score": 0.9546119570732117,
+      "max_score": 0.9546119570732117
+    }
+  ]
+}
