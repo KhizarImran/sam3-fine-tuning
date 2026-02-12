@@ -5,14 +5,14 @@ defaults:
 
 # Override paths for fuse neutrals dataset
 paths:
-  roboflow_vl_100_root: "sam3_datasets"
+  roboflow_vl_100_root: "."
   experiment_log_dir: "experiments/fuse_neutrals"
   bpe_path: "sam3/sam3/assets/bpe_simple_vocab_16e6.txt.gz"
 
 # Override dataset configuration
 roboflow_train:
   num_images: null  # Use all available images (24 training images)
-  supercategory: "fuse-neutrals"  # Our dataset name
+  supercategory: "Find fuse neutrals.v5i.coco"  # Our dataset name
 
 # Override launcher settings for single GPU
 launcher:
@@ -39,7 +39,7 @@ trainer:
   data:
     val:
       dataset:
-        img_folder: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/
+        img_folder: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid
         ann_file: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json
 
   # Override validation evaluator to use 'valid' instead of 'test'
@@ -49,7 +49,7 @@ trainer:
         detection:
           pred_file_evaluators:
             - _target_: sam3.eval.coco_eval_offline.CocoEvaluatorOfflineWithPredFileEvaluators
-              gt_path: ${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json
+              gt_path: "${paths.roboflow_vl_100_root}/${roboflow_train.supercategory}/valid/_annotations.coco.json"
               tide: False
               iou_type: "bbox"
 
