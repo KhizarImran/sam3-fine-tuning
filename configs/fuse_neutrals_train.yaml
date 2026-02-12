@@ -23,8 +23,8 @@ launcher:
 scratch:
   batch_size: 2  # Increased from 1 - adjust if you get OOM errors
   resolution: 1008  # Keep original resolution for RoPE compatibility
-  num_train_workers: 2  # Small number of workers
-  num_val_workers: 1  # Validation workers
+  num_train_workers: 0  # Reduce to 0 to save system RAM
+  num_val_workers: 0  # Validation workers
   max_ann_per_img: 50  # Max annotations per image
 
 # Seed for reproducibility
