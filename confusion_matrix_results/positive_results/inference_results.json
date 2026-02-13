@@ -1,0 +1,265 @@
+{
+  "metadata": {
+    "timestamp": "2026-02-13T12:45:25.585050",
+    "checkpoint": "experiments/fuse_neutrals/checkpoints/checkpoint.pt",
+    "text_prompt": "fuse neutral",
+    "confidence_threshold": 0.9,
+    "total_images": 11,
+    "total_detections": 11
+  },
+  "results": [
+    {
+      "image_name": "Image-34_jpg.rf.923fd5a012bad767346af3a01be6df17.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-34_jpg.rf.923fd5a012bad767346af3a01be6df17.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            161.49554443359375,
+            336.9564514160156,
+            279.48529052734375,
+            452.8367614746094
+          ],
+          "score": 0.9795971512794495,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9795971512794495,
+      "max_score": 0.9795971512794495
+    },
+    {
+      "image_name": "Image-34_jpg.rf.923fd5a012bad767346af3a01be6df17_detected.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-34_jpg.rf.923fd5a012bad767346af3a01be6df17_detected.jpg",
+      "image_size": [
+        1185,
+        1262
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            383.96435546875,
+            852.8906860351562,
+            643.5465698242188,
+            1109.4017333984375
+          ],
+          "score": 0.976875364780426,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.976875364780426,
+      "max_score": 0.976875364780426
+    },
+    {
+      "image_name": "Image-40_jpg.rf.3669fb31cbed411cabdce3f0132d6c18.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-40_jpg.rf.3669fb31cbed411cabdce3f0132d6c18.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            252.51197814941406,
+            142.7300262451172,
+            379.22711181640625,
+            248.6794891357422
+          ],
+          "score": 0.9714499115943909,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9714499115943909,
+      "max_score": 0.9714499115943909
+    },
+    {
+      "image_name": "Image-40_jpg.rf.3669fb31cbed411cabdce3f0132d6c18_detected.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-40_jpg.rf.3669fb31cbed411cabdce3f0132d6c18_detected.jpg",
+      "image_size": [
+        1185,
+        1262
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            585.7198486328125,
+            416.2445068359375,
+            866.4527587890625,
+            651.5955200195312
+          ],
+          "score": 0.9770641922950745,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9770641922950745,
+      "max_score": 0.9770641922950745
+    },
+    {
+      "image_name": "Image-43_jpg.rf.091061ba7905025e1062258601fc7af0.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-43_jpg.rf.091061ba7905025e1062258601fc7af0.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            246.2314453125,
+            134.657470703125,
+            360.4605712890625,
+            232.88958740234375
+          ],
+          "score": 0.9768092036247253,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9768092036247253,
+      "max_score": 0.9768092036247253
+    },
+    {
+      "image_name": "Image-43_jpg.rf.091061ba7905025e1062258601fc7af0_detected.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-43_jpg.rf.091061ba7905025e1062258601fc7af0_detected.jpg",
+      "image_size": [
+        1185,
+        1262
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            572.5530395507812,
+            399.6744689941406,
+            826.68701171875,
+            616.316162109375
+          ],
+          "score": 0.9785551428794861,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9785551428794861,
+      "max_score": 0.9785551428794861
+    },
+    {
+      "image_name": "Image-52_jpg.rf.711a9eb664061c6f26f361304b6fdd45.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-52_jpg.rf.711a9eb664061c6f26f361304b6fdd45.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            280.06390380859375,
+            188.09437561035156,
+            418.21875,
+            278.1920471191406
+          ],
+          "score": 0.9809904098510742,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9809904098510742,
+      "max_score": 0.9809904098510742
+    },
+    {
+      "image_name": "Image-52_jpg.rf.711a9eb664061c6f26f361304b6fdd45_detected.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-52_jpg.rf.711a9eb664061c6f26f361304b6fdd45_detected.jpg",
+      "image_size": [
+        1185,
+        1262
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            649.5931396484375,
+            518.207275390625,
+            957.4824829101562,
+            718.462158203125
+          ],
+          "score": 0.9805295467376709,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9805295467376709,
+      "max_score": 0.9805295467376709
+    },
+    {
+      "image_name": "Image-56_jpg.rf.02188c429e41bb1714a2da79cd66e934.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-56_jpg.rf.02188c429e41bb1714a2da79cd66e934.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            188.90936279296875,
+            292.6441650390625,
+            318.8336181640625,
+            396.16424560546875
+          ],
+          "score": 0.9670951962471008,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9670951962471008,
+      "max_score": 0.9670951962471008
+    },
+    {
+      "image_name": "Image-56_jpg.rf.02188c429e41bb1714a2da79cd66e934_detected.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-56_jpg.rf.02188c429e41bb1714a2da79cd66e934_detected.jpg",
+      "image_size": [
+        1185,
+        1262
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            441.7247009277344,
+            755.8981323242188,
+            731.6560668945312,
+            984.1943359375
+          ],
+          "score": 0.9745872616767883,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9745872616767883,
+      "max_score": 0.9745872616767883
+    },
+    {
+      "image_name": "Image-60_jpg.rf.9adba8bee1c3f24c4e3161d0e1f636fa.jpg",
+      "image_path": "confusion_matrix_test/fuse_neutrals/Image-60_jpg.rf.9adba8bee1c3f24c4e3161d0e1f636fa.jpg",
+      "image_size": [
+        512,
+        512
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            240.039794921875,
+            200.42056274414062,
+            337.81146240234375,
+            302.9018859863281
+          ],
+          "score": 0.9335934519767761,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9335934519767761,
+      "max_score": 0.9335934519767761
+    }
+  ]
+}

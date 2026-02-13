@@ -84,5 +84,11 @@ temp/
 .env
 .env.local
 
+# AWS/SSH Keys (SECURITY - Never commit!)
+*.pem
+*.ppk
+*.key
+object-detection-keypair.pem
+
 # SAM3 submodule/clone
 sam3/

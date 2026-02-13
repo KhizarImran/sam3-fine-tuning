@@ -1,0 +1,51 @@
+# Production Dockerfile for SAM3 Fuse Neutrals Detection
+# Optimized for Azure Batch or Azure Container Instances
+
+FROM nvidia/cuda:12.1.0-cudnn8-runtime-ubuntu22.04
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3.10 \
+    python3-pip \
+    git \
+    wget \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Install SAM3
+RUN git clone https://github.com/facebookresearch/sam2.git sam3 && \
+    cd sam3 && \
+    pip3 install --no-cache-dir -e .
+
+# Copy application code
+COPY scripts/ ./scripts/
+COPY utils/ ./utils/
+COPY configs/ ./configs/
+
+# Copy fine-tuned checkpoint (this will be the trained model)
+# Note: In production, mount this from Azure Blob Storage instead
+COPY experiments/fuse_neutrals/checkpoints/checkpoint_epoch_50.pth ./model/checkpoint.pth
+
+# Create directories for input/output
+RUN mkdir -p /app/input /app/output
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV TORCH_HOME=/app/.cache/torch
+
+# Entry point script for batch processing
+COPY docker-entrypoint.sh /app/
+RUN chmod +x /app/docker-entrypoint.sh
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

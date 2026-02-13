@@ -1,0 +1,47 @@
+FALSE POSITIVES - Images Detected but Labeled as Negative (Threshold 0.9)
+================================================================================
+
+1. EDF_146477_1610004631489_527972_05012026092654_MGS Elec Exchange SMETS2 1PH_E.png
+   Detections: 1
+   Confidence: 96.6% (avg), 96.6% (max)
+   Location: confusion_matrix_test/non_fuse_neutrals/EDF_146477_1610004631489_527972_05012026092654_MGS Elec Exchange SMETS2 1PH_E.png
+   Visualization: confusion_matrix_results/negative_results/EDF_146477_1610004631489_527972_05012026092654_MGS Elec Exchange SMETS2 1PH_E_detected.jpg
+
+2. EDF_146655_1610012717547_528843_02012026093903_MGS Elec Exchange SMETS2 1PH_E.png
+   Detections: 1
+   Confidence: 95.5% (avg), 95.5% (max)
+   Location: confusion_matrix_test/non_fuse_neutrals/EDF_146655_1610012717547_528843_02012026093903_MGS Elec Exchange SMETS2 1PH_E.png
+   Visualization: confusion_matrix_results/negative_results/EDF_146655_1610012717547_528843_02012026093903_MGS Elec Exchange SMETS2 1PH_E_detected.jpg
+
+3. EDF_146725_1100013104899_529603_15012026123542_MGS Elec Exchange SMETS2 1PH_E.png
+   Detections: 1
+   Confidence: 97.2% (avg), 97.2% (max)
+   Location: confusion_matrix_test/non_fuse_neutrals/EDF_146725_1100013104899_529603_15012026123542_MGS Elec Exchange SMETS2 1PH_E.png
+   Visualization: confusion_matrix_results/negative_results/EDF_146725_1100013104899_529603_15012026123542_MGS Elec Exchange SMETS2 1PH_E_detected.jpg
+
+4. EDF_154102_2310590152810_533041_06012026103304_MGS Elec Exchange SMETS2 1PH_E.png
+   Detections: 1
+   Confidence: 93.8% (avg), 93.8% (max)
+   Location: confusion_matrix_test/non_fuse_neutrals/EDF_154102_2310590152810_533041_06012026103304_MGS Elec Exchange SMETS2 1PH_E.png
+   Visualization: confusion_matrix_results/negative_results/EDF_154102_2310590152810_533041_06012026103304_MGS Elec Exchange SMETS2 1PH_E_detected.jpg
+
+5. Image-21.jpg
+   Detections: 1
+   Confidence: 93.2% (avg), 93.2% (max)
+   Location: confusion_matrix_test/non_fuse_neutrals/Image-21.jpg
+   Visualization: confusion_matrix_results/negative_results/Image-21_detected.jpg
+
+
+TRUE NEGATIVES - Correctly No Detection
+================================================================================
+
+1. EDF_144836_1100010593846_537490_02012026110435_MGS Elec Exchange SMETS2 1PH_E.png
+2. EDF_146775_2335557923712_536683_05012026134544_MGS Elec Exchange SMETS2 1PH_E.png
+3. EDF_146840_1416312041000_537490_05012026153212_MGS Elec Exchange SMETS2 1PH_E.png
+4. EDF_152507_2333910163210_295514_02012026144303_MGS Elec Exchange SMETS2 1PH_E.png
+5. EDF_154631_2310173790217_538694_08012026123329_MGS Elec Exchange SMETS2 1PH_E.png
+6. EDF_155357_2341739394410_537392_06012026111308_MGS Elec Exchange SMETS2 1PH_E.png
+7. EDF_166619_1620000179774_528848_14012026090914_MGS Elec Exchange SMETS2 1PH_E.png
+8. Image-13.jpg
+9. Image-16.jpg
+10. Image-24.jpg

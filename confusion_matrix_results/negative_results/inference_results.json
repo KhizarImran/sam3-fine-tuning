@@ -1,0 +1,247 @@
+{
+  "metadata": {
+    "timestamp": "2026-02-13T12:47:49.075239",
+    "checkpoint": "experiments/fuse_neutrals/checkpoints/checkpoint.pt",
+    "text_prompt": "fuse neutral",
+    "confidence_threshold": 0.9,
+    "total_images": 15,
+    "total_detections": 5
+  },
+  "results": [
+    {
+      "image_name": "EDF_144836_1100010593846_537490_02012026110435_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_144836_1100010593846_537490_02012026110435_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "EDF_146477_1610004631489_527972_05012026092654_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_146477_1610004631489_527972_05012026092654_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            949.1488037109375,
+            640.4135131835938,
+            1182.38623046875,
+            1112.447265625
+          ],
+          "score": 0.9663721323013306,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9663721323013306,
+      "max_score": 0.9663721323013306
+    },
+    {
+      "image_name": "EDF_146655_1610012717547_528843_02012026093903_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_146655_1610012717547_528843_02012026093903_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            1095.9732666015625,
+            851.933837890625,
+            1345.164306640625,
+            1071.412109375
+          ],
+          "score": 0.9553279876708984,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9553279876708984,
+      "max_score": 0.9553279876708984
+    },
+    {
+      "image_name": "EDF_146725_1100013104899_529603_15012026123542_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_146725_1100013104899_529603_15012026123542_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1500,
+        2000
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            256.0988464355469,
+            1184.586669921875,
+            671.9993896484375,
+            1565.177978515625
+          ],
+          "score": 0.9720019102096558,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9720019102096558,
+      "max_score": 0.9720019102096558
+    },
+    {
+      "image_name": "EDF_146775_2335557923712_536683_05012026134544_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_146775_2335557923712_536683_05012026134544_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "EDF_146840_1416312041000_537490_05012026153212_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_146840_1416312041000_537490_05012026153212_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "EDF_152507_2333910163210_295514_02012026144303_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_152507_2333910163210_295514_02012026144303_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "EDF_154102_2310590152810_533041_06012026103304_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_154102_2310590152810_533041_06012026103304_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            1208.0018310546875,
+            1662.37890625,
+            1303.49365234375,
+            1750.8116455078125
+          ],
+          "score": 0.9381728768348694,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9381728768348694,
+      "max_score": 0.9381728768348694
+    },
+    {
+      "image_name": "EDF_154631_2310173790217_538694_08012026123329_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_154631_2310173790217_538694_08012026123329_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "EDF_155357_2341739394410_537392_06012026111308_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_155357_2341739394410_537392_06012026111308_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "EDF_166619_1620000179774_528848_14012026090914_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/EDF_166619_1620000179774_528848_14012026090914_MGS Elec Exchange SMETS2 1PH_E.png",
+      "image_size": [
+        1548,
+        2000
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "Image-13.jpg",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/Image-13.jpg",
+      "image_size": [
+        3264,
+        2448
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "Image-16.jpg",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/Image-16.jpg",
+      "image_size": [
+        4128,
+        2580
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    },
+    {
+      "image_name": "Image-21.jpg",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/Image-21.jpg",
+      "image_size": [
+        3264,
+        2448
+      ],
+      "num_detections": 1,
+      "detections": [
+        {
+          "bbox": [
+            1408.703369140625,
+            724.4285278320312,
+            1985.38916015625,
+            1023.069580078125
+          ],
+          "score": 0.9322679042816162,
+          "category": "fuse neutral"
+        }
+      ],
+      "avg_score": 0.9322679042816162,
+      "max_score": 0.9322679042816162
+    },
+    {
+      "image_name": "Image-24.jpg",
+      "image_path": "confusion_matrix_test/non_fuse_neutrals/Image-24.jpg",
+      "image_size": [
+        3264,
+        2448
+      ],
+      "num_detections": 0,
+      "detections": [],
+      "avg_score": 0.0,
+      "max_score": 0.0
+    }
+  ]
+}
